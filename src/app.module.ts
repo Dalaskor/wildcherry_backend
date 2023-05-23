@@ -1,10 +1,27 @@
 import { Module } from '@nestjs/common';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
+import { ConfigModule, ConfigService } from '@nestjs/config';
+import { SequelizeModule } from '@nestjs/sequelize';
+import * as Joi from 'joi';
 
 @Module({
-  imports: [],
-  controllers: [AppController],
-  providers: [AppService],
+  imports: [
+    ConfigModule.forRoot({
+      isGlobal: true,
+      validationSchema: Joi.object({
+        PORT: Joi.number().required(),
+        POSTGRES_URI: Joi.string().required(),
+      }),
+      envFilePath: './.env',
+    }),
+    SequelizeModule.forRootAsync({
+      useFactory: (configService: ConfigService) => ({
+          uri: configService.get<string>('POSTGRES_URI'),
+          dialect: 'postgres',
+          models: [],
+          autoLoadModels: true,
+      }),
+      inject: [ConfigService],
+    }),
+  ],
 })
 export class AppModule {}
