@@ -1,0 +1,27 @@
+services:
+  main:
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+      target: development
+    command: npm run start:dev
+    env_file:
+      - ./.env
+    depends_on:
+      - postgres
+    volumes:
+      - .:/usr/src/wildcherry
+      - /usr/src/wildcherry/node_modules
+    ports:
+      - '5000:5000'
+  postgres:
+    image: postgres:15
+    environment:
+      POSTGRES_DB: wildcherry
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: root
+      PG_DATA: /var/lib/postgresql/data
+    ports:
+      - '5432:5432'
+    volumes:
+      - ./docker_postgres_init.sql:/docker-entrypoint initdb.d/docker_postgres_init.sql
