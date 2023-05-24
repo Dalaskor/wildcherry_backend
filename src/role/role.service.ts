@@ -17,6 +17,10 @@ export class RoleSerivce {
    */
   async create(dto: CreateRoleDto): Promise<Role> {
     console.log('Creating role...');
+    const candidate = await this.roleRepository.findOne({where: {value: dto.value}});
+    if(candidate) {
+        throw new BadRequestException('Такая роль уже существует');
+    }
     const role: Role = await this.roleRepository.create(dto);
     if (!role) {
       console.error('Ошибка создания роли');

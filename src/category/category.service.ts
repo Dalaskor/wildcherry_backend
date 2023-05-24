@@ -18,6 +18,10 @@ export class CategoryService {
    * @throws BadRequestException - ошибка создания категории
    */
   async create(dto: CreateCategoryDto): Promise<Category> {
+    const candidate = await this.categoryRepository.findOne({where: {name: dto.name}});
+    if(candidate) {
+        throw new BadRequestException('Такая категория товаров уже существует');
+    }
     console.log('Creating category...');
     const category: Category = await this.categoryRepository.create(dto);
     if (!category) {

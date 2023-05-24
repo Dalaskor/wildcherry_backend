@@ -17,6 +17,12 @@ export class UserService {
    */
   async create(dto: CreateUserDto): Promise<User> {
     console.log('Creating user...');
+    const candidate = await this.userRepository.findOne({
+      where: { email: dto.email },
+    });
+    if (candidate) {
+      throw new BadRequestException('Данный email уже занят');
+    }
     const user: User = await this.userRepository.create(dto);
     if (!user) {
       console.error('Ошибка создания пользователя');

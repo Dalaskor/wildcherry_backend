@@ -29,3 +29,5 @@ export * from './dtos/create-specification.dto';
 export * from './dtos/update-specification.dto';
 export * from './dtos/create-category.dto';
 export * from './dtos/update-category.dto';
+export * from './dtos/create-sub-category.dto';
+export * from './dtos/update-sub-category.dto';
