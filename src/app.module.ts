@@ -6,6 +6,7 @@ import * as Joi from 'joi';
 import { ProductModule } from './product/product.module';
 import { ProfileModule } from './profile/profile.module';
 import { RoleModule } from './role/role.module';
+import { SpecificationModule } from './specification/specification.module';
 import { UserModule } from './user/user.module';
 
 @Module({
@@ -43,6 +44,7 @@ import { UserModule } from './user/user.module';
     RoleModule,
     ProfileModule,
     ProductModule,
+    SpecificationModule,
   ],
 })
 export class AppModule {}

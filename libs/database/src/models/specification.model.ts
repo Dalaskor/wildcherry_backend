@@ -19,24 +19,28 @@ export class Specification extends Model<
   @ApiProperty({
     example: 10.1,
     description: 'Длина товара',
+    nullable: true,
   })
   @Column({ type: DataType.DOUBLE })
   lenght: number;
   @ApiProperty({
     example: 10.1,
     description: 'Ширина товара',
+    nullable: true,
   })
   @Column({ type: DataType.DOUBLE })
   width: number;
   @ApiProperty({
     example: 10.1,
     description: 'Высота товара',
+    nullable: true,
   })
   @Column({ type: DataType.DOUBLE })
   height: number;
   @ApiProperty({
     example: 10.1,
     description: 'Вес товара',
+    nullable: true,
   })
   @Column({ type: DataType.DOUBLE })
   weight: number;
