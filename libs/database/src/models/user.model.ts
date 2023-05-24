@@ -8,6 +8,7 @@ import {
   Model,
   Table,
 } from 'sequelize-typescript';
+import { Favorite } from './favorite.model';
 import { Profile } from './profile.model';
 import { Review } from './review.model';
 import { Role } from './role.model';
@@ -59,4 +60,6 @@ export class User extends Model<User, UserCreationAttrs> {
   })
   @HasMany(() => Review, 'fk_reviewuser')
   reviews: Review[];
+  @HasOne(() => Favorite, 'fk_favoriteid')
+  favorite: Favorite;
 }

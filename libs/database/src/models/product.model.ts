@@ -1,6 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
 import {
   BelongsTo,
+  BelongsToMany,
   Column,
   DataType,
   HasMany,
@@ -8,6 +9,8 @@ import {
   Model,
   Table,
 } from 'sequelize-typescript';
+import { FavoriteProducts } from './favorite-products.model';
+import { Favorite } from './favorite.model';
 import { ProductImages } from './product-images.model';
 import { Review } from './review.model';
 import { Specification } from './specification.model';
@@ -118,4 +121,11 @@ export class Product extends Model<Product, ProductCreationAttrs> {
   })
   @HasMany(() => Review, 'fk_reviewproduct')
   reviews: Review[];
+  @ApiProperty({
+    type: Favorite,
+    isArray: true,
+    description: 'У каких пользователей этот товар находиться в избранном',
+  })
+  @BelongsToMany(() => Favorite, () => FavoriteProducts)
+  favorites: Favorite[];
 }
