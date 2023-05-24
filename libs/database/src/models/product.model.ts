@@ -15,6 +15,7 @@ import { ProductImages } from './product-images.model';
 import { Review } from './review.model';
 import { Specification } from './specification.model';
 import { SubCategory } from './sub-category.model';
+import { User } from './user.model';
 
 interface ProductCreationAttrs {
   name: string;
@@ -128,4 +129,12 @@ export class Product extends Model<Product, ProductCreationAttrs> {
   })
   @BelongsToMany(() => Favorite, () => FavoriteProducts)
   favorites: Favorite[];
+  @ApiProperty({
+      type: User,
+      description: 'Продавец данного товара'
+  })
+  @BelongsTo(() => User, 'fk_productuser')
+  owner: User;
+  @Column({ type: DataType.INTEGER, allowNull: true })
+  fk_productuser: number;
 }

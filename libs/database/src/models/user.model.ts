@@ -9,6 +9,7 @@ import {
   Table,
 } from 'sequelize-typescript';
 import { Favorite } from './favorite.model';
+import { Product } from './product.model';
 import { Profile } from './profile.model';
 import { Review } from './review.model';
 import { Role } from './role.model';
@@ -62,4 +63,11 @@ export class User extends Model<User, UserCreationAttrs> {
   reviews: Review[];
   @HasOne(() => Favorite, 'fk_favoriteid')
   favorite: Favorite;
+  @ApiProperty({
+      type: Product,
+      isArray: true,
+      description: 'Товары продавца'
+  })
+  @HasMany(() => Product, 'fk_productuser')
+  products: Product[];
 }
