@@ -11,6 +11,8 @@ import {
 } from 'sequelize-typescript';
 import { CartProducts } from './cart-products.model';
 import { Cart } from './cart.model';
+import { DeliveryProducts } from './delivery-products.model';
+import { Delivery } from './delivery.model';
 import { DiscountProducts } from './discount-products.model';
 import { Discount } from './discount.model';
 import { FavoriteProducts } from './favorite-products.model';
@@ -113,16 +115,16 @@ export class Product extends Model<Product, ProductCreationAttrs> {
   @Column({ type: DataType.INTEGER, allowNull: true })
   fk_productid: number;
   @ApiProperty({
-      type: ProductImages,
-      isArray: true,
-      description: 'Изображения товара'
+    type: ProductImages,
+    isArray: true,
+    description: 'Изображения товара',
   })
   @HasMany(() => ProductImages, 'fk_productimagesid')
   images: ProductImages[];
   @ApiProperty({
-      type: Review,
-      isArray: true,
-      description: 'Отзывы на товар'
+    type: Review,
+    isArray: true,
+    description: 'Отзывы на товар',
   })
   @HasMany(() => Review, 'fk_reviewproduct')
   reviews: Review[];
@@ -134,8 +136,8 @@ export class Product extends Model<Product, ProductCreationAttrs> {
   @BelongsToMany(() => Favorite, () => FavoriteProducts)
   favorites: Favorite[];
   @ApiProperty({
-      type: User,
-      description: 'Продавец данного товара'
+    type: User,
+    description: 'Продавец данного товара',
   })
   @BelongsTo(() => User, 'fk_productuser')
   owner: User;
@@ -149,10 +151,17 @@ export class Product extends Model<Product, ProductCreationAttrs> {
   @BelongsToMany(() => Discount, () => DiscountProducts)
   discounts: Discount[];
   @ApiProperty({
-    type: Product,
+    type: Cart,
     isArray: true,
     description: 'В каких корзинах находиться данный товар',
   })
-  @BelongsToMany(() => Product, () => CartProducts)
+  @BelongsToMany(() => Cart, () => CartProducts)
   carts: Cart[];
+  @ApiProperty({
+    type: Delivery,
+    isArray: true,
+    description: 'В каких доставках находиться данный товар',
+  })
+  @BelongsToMany(() => Delivery, () => DeliveryProducts)
+  deliveries: Delivery[];
 }

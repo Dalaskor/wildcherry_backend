@@ -14,4 +14,6 @@ export * from './models/discount.model';
 export * from './models/discount-products.model';
 export * from './models/cart.model';
 export * from './models/cart-products.model';
+export * from './models/delivery.model';
+export * from './models/delivery-products.model';
 // DTOs
