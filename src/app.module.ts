@@ -3,6 +3,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { JwtModule } from '@nestjs/jwt';
 import { SequelizeModule } from '@nestjs/sequelize';
 import * as Joi from 'joi';
+import { UserModule } from './user/user.module';
 
 @Module({
   imports: [
@@ -35,6 +36,7 @@ import * as Joi from 'joi';
       }),
       inject: [ConfigService],
     }),
+    UserModule,
   ],
 })
 export class AppModule {}

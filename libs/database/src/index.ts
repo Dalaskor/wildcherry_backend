@@ -17,3 +17,5 @@ export * from './models/cart-products.model';
 export * from './models/delivery.model';
 export * from './models/delivery-products.model';
 // DTOs
+export * from './dtos/create-user.dto';
+export * from './dtos/update-user.dto';
