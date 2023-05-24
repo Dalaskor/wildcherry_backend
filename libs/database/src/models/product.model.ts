@@ -9,6 +9,7 @@ import {
   Table,
 } from 'sequelize-typescript';
 import { ProductImages } from './product-images.model';
+import { Review } from './review.model';
 import { Specification } from './specification.model';
 import { SubCategory } from './sub-category.model';
 
@@ -110,4 +111,11 @@ export class Product extends Model<Product, ProductCreationAttrs> {
   })
   @HasMany(() => ProductImages, 'fk_productimagesid')
   images: ProductImages[];
+  @ApiProperty({
+      type: Review,
+      isArray: true,
+      description: 'Отзывы на товар'
+  })
+  @HasMany(() => Review, 'fk_reviewproduct')
+  reviews: Review[];
 }

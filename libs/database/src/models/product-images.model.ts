@@ -28,8 +28,6 @@ export class ProductImages extends Model<
     allowNull: false,
   })
   url: string;
-
-
   @ApiProperty({
     type: Product,
     description: 'Товар на данном изображении',

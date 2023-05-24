@@ -3,11 +3,13 @@ import {
   BelongsToMany,
   Column,
   DataType,
+  HasMany,
   HasOne,
   Model,
   Table,
 } from 'sequelize-typescript';
 import { Profile } from './profile.model';
+import { Review } from './review.model';
 import { Role } from './role.model';
 import { UserRoles } from './user-roles.model';
 
@@ -50,4 +52,11 @@ export class User extends Model<User, UserCreationAttrs> {
   })
   @HasOne(() => Profile, 'fk_profileid')
   profile: Profile;
+  @ApiProperty({
+      type: Review,
+      isArray: true,
+      description: 'Отзывы пользователя'
+  })
+  @HasMany(() => Review, 'fk_reviewuser')
+  reviews: Review[];
 }
