@@ -27,3 +27,5 @@ export * from './dtos/create-product.dto';
 export * from './dtos/update-product.dto';
 export * from './dtos/create-specification.dto';
 export * from './dtos/update-specification.dto';
+export * from './dtos/create-category.dto';
+export * from './dtos/update-category.dto';
