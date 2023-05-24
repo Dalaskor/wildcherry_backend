@@ -28,6 +28,10 @@ export class UserController {
     description: 'DTO для создания пользователя',
   })
   @ApiResponse({ status: HttpStatus.CREATED, type: User })
+  @ApiResponse({
+    status: HttpStatus.BAD_REQUEST,
+    description: 'Ошибка при создании пользователя',
+  })
   @Post()
   async create(@Body() dto: CreateUserDto): Promise<User> {
     return this.userService.create(dto);
@@ -46,6 +50,10 @@ export class UserController {
     example: 1,
   })
   @ApiResponse({ status: HttpStatus.OK, type: User })
+  @ApiResponse({
+    status: HttpStatus.NOT_FOUND,
+    description: 'Пользователь не найден',
+  })
   @Get('/:id')
   async getOne(@Param('id') id: number): Promise<User> {
     return this.userService.getOne(id);
@@ -62,6 +70,10 @@ export class UserController {
     description: 'DTO для обновления пользователя',
   })
   @ApiResponse({ status: HttpStatus.OK, type: User })
+  @ApiResponse({
+    status: HttpStatus.NOT_FOUND,
+    description: 'Пользователь не найден',
+  })
   @Put('/:id')
   async update(
     @Param('id') id: number,
@@ -77,6 +89,10 @@ export class UserController {
     example: 1,
   })
   @ApiResponse({ status: HttpStatus.OK, type: User })
+  @ApiResponse({
+    status: HttpStatus.NOT_FOUND,
+    description: 'Пользователь не найден',
+  })
   @Delete('/:id')
   async delete(@Param('id') id: number): Promise<User> {
     return this.userService.delete(id);

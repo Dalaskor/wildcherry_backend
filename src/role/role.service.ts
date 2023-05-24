@@ -45,7 +45,7 @@ export class RoleSerivce {
     const role: Role = await this.roleRepository.findByPk(id);
     if (!role) {
       console.error('Роль не найдена');
-      throw new BadRequestException('Роль не найдена');
+      throw new NotFoundException('Роль не найдена');
     }
     console.log('Role was founded');
     return role;

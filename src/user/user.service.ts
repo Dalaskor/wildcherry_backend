@@ -45,7 +45,7 @@ export class UserService {
     const user: User = await this.userRepository.findByPk(id);
     if (!user) {
       console.error('Пользователь не найден');
-      throw new BadRequestException('Пользователь не найден');
+      throw new NotFoundException('Пользователь не найден');
     }
     console.log('User was founded');
     return user;

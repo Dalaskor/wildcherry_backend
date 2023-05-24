@@ -28,6 +28,10 @@ export class RoleController {
     description: 'DTO для создания роли',
   })
   @ApiResponse({ status: HttpStatus.CREATED, type: Role })
+  @ApiResponse({
+    status: HttpStatus.BAD_REQUEST,
+    description: 'Ошибка при создании роли',
+  })
   @Post()
   async create(@Body() dto: CreateRoleDto): Promise<Role> {
     return this.roleService.create(dto);
@@ -46,6 +50,7 @@ export class RoleController {
     example: 1,
   })
   @ApiResponse({ status: HttpStatus.OK, type: Role })
+  @ApiResponse({ status: HttpStatus.NOT_FOUND, description: 'Роль не найдена' })
   @Get('/:id')
   async getOne(@Param('id') id: number): Promise<Role> {
     return this.roleService.getOne(id);
@@ -62,6 +67,7 @@ export class RoleController {
     description: 'DTO для обновления роли',
   })
   @ApiResponse({ status: HttpStatus.OK, type: Role })
+  @ApiResponse({ status: HttpStatus.NOT_FOUND, description: 'Роль не найдена' })
   @Put('/:id')
   async update(
     @Param('id') id: number,
@@ -77,6 +83,7 @@ export class RoleController {
     example: 1,
   })
   @ApiResponse({ status: HttpStatus.OK, type: Role })
+  @ApiResponse({ status: HttpStatus.NOT_FOUND, description: 'Роль не найдена' })
   @Delete('/:id')
   async delete(@Param('id') id: number): Promise<Role> {
     return this.roleService.delete(id);

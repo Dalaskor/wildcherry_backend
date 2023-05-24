@@ -3,6 +3,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { JwtModule } from '@nestjs/jwt';
 import { SequelizeModule } from '@nestjs/sequelize';
 import * as Joi from 'joi';
+import { ProfileModule } from './profile/profile.module';
 import { RoleModule } from './role/role.module';
 import { UserModule } from './user/user.module';
 
@@ -39,6 +40,7 @@ import { UserModule } from './user/user.module';
     }),
     UserModule,
     RoleModule,
+    ProfileModule,
   ],
 })
 export class AppModule {}
