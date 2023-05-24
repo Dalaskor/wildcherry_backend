@@ -29,13 +29,13 @@ export class UserController {
   })
   @ApiResponse({ status: HttpStatus.CREATED, type: User })
   @Post()
-  async create(@Body() dto: CreateUserDto) {
+  async create(@Body() dto: CreateUserDto): Promise<User> {
     return this.userService.create(dto);
   }
   @ApiOperation({ summary: 'Получить всех пользователей' })
   @ApiResponse({ status: HttpStatus.OK, type: User, isArray: true })
   @Get()
-  async getAll() {
+  async getAll(): Promise<User[]> {
     return this.userService.getAll();
   }
   @ApiOperation({ summary: 'Получить одного пользователя по id' })
@@ -47,7 +47,7 @@ export class UserController {
   })
   @ApiResponse({ status: HttpStatus.OK, type: User })
   @Get('/:id')
-  async getOne(@Param('id') id: number) {
+  async getOne(@Param('id') id: number): Promise<User> {
     return this.userService.getOne(id);
   }
   @ApiOperation({ summary: 'Обновить пользователя по id' })
@@ -63,7 +63,10 @@ export class UserController {
   })
   @ApiResponse({ status: HttpStatus.OK, type: User })
   @Put('/:id')
-  async update(@Param('id') id: number, @Body() dto: UpdateUserDto) {
+  async update(
+    @Param('id') id: number,
+    @Body() dto: UpdateUserDto,
+  ): Promise<User> {
     return this.userService.update(id, dto);
   }
   @ApiOperation({ summary: 'Удалить пользователя по id' })
@@ -75,7 +78,7 @@ export class UserController {
   })
   @ApiResponse({ status: HttpStatus.OK, type: User })
   @Delete('/:id')
-  async delete(@Param('id') id: number) {
+  async delete(@Param('id') id: number): Promise<User> {
     return this.userService.delete(id);
   }
 }

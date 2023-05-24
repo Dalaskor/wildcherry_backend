@@ -19,3 +19,5 @@ export * from './models/delivery-products.model';
 // DTOs
 export * from './dtos/create-user.dto';
 export * from './dtos/update-user.dto';
+export * from './dtos/create-role.dto';
+export * from './dtos/update-role.dto';

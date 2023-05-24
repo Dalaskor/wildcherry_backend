@@ -30,9 +30,8 @@ export class Role extends Model<Role, RoleCreationAttrs> {
   @Column({ type: DataType.STRING, unique: true, allowNull: false })
   value: string;
   @ApiProperty({
-    example: 'Продавец',
-    description:
-      'Пользователь с разрешением на создание товаров и покупку товаров',
+    example: 'Барыга',
+    description: 'Описание роли',
   })
   @Column({
     type: DataType.STRING,
