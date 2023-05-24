@@ -42,6 +42,10 @@ export class Discount extends Model<Discount, DiscountCreationAttrs> {
   })
   @BelongsToMany(() => Product, () => DiscountProducts)
   products: Product[];
+  @ApiProperty({
+    type: User,
+    description: 'Создатель скидки',
+  })
   @BelongsTo(() => User, 'fk_discountid')
   owner: User;
   @Column({ type: DataType.INTEGER, allowNull: true })

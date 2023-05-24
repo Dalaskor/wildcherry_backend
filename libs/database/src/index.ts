@@ -12,4 +12,6 @@ export * from './models/favorite.model';
 export * from './models/favorite-products.model';
 export * from './models/discount.model';
 export * from './models/discount-products.model';
+export * from './models/cart.model';
+export * from './models/cart-products.model';
 // DTOs

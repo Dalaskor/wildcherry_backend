@@ -28,6 +28,10 @@ export class Favorite extends Model<Favorite> {
   })
   @BelongsToMany(() => Product, () => FavoriteProducts)
   products: Product[];
+  @ApiProperty({
+      type: User,
+      description: 'Пользователь, которому принадлежит этот раздел'
+  })
   @BelongsTo(() => User, 'fk_favoriteid')
   user: User;
   @Column({ type: DataType.INTEGER, allowNull: true, unique: true })

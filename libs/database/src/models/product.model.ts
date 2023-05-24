@@ -9,6 +9,8 @@ import {
   Model,
   Table,
 } from 'sequelize-typescript';
+import { CartProducts } from './cart-products.model';
+import { Cart } from './cart.model';
 import { DiscountProducts } from './discount-products.model';
 import { Discount } from './discount.model';
 import { FavoriteProducts } from './favorite-products.model';
@@ -146,4 +148,11 @@ export class Product extends Model<Product, ProductCreationAttrs> {
   })
   @BelongsToMany(() => Discount, () => DiscountProducts)
   discounts: Discount[];
+  @ApiProperty({
+    type: Product,
+    isArray: true,
+    description: 'В каких корзинах находиться данный товар',
+  })
+  @BelongsToMany(() => Product, () => CartProducts)
+  carts: Cart[];
 }

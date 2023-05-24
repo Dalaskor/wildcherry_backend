@@ -8,6 +8,7 @@ import {
   Model,
   Table,
 } from 'sequelize-typescript';
+import { Cart } from './cart.model';
 import { Discount } from './discount.model';
 import { Favorite } from './favorite.model';
 import { Product } from './product.model';
@@ -62,8 +63,20 @@ export class User extends Model<User, UserCreationAttrs> {
   })
   @HasMany(() => Review, 'fk_reviewuser')
   reviews: Review[];
+  @ApiProperty({
+      type: Favorite,
+      isArray: true,
+      description: 'Избарнные товары пользователя'
+  })
   @HasOne(() => Favorite, 'fk_favoriteid')
   favorite: Favorite;
+  @ApiProperty({
+      type: Cart,
+      isArray: true,
+      description: 'Корзина пользователя'
+  })
+  @HasOne(() => Cart, 'fk_cartid')
+  cart: Cart;
   @ApiProperty({
       type: Product,
       isArray: true,
