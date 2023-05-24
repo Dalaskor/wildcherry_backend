@@ -8,6 +8,7 @@ import {
   Model,
   Table,
 } from 'sequelize-typescript';
+import { Discount } from './discount.model';
 import { Favorite } from './favorite.model';
 import { Product } from './product.model';
 import { Profile } from './profile.model';
@@ -70,4 +71,11 @@ export class User extends Model<User, UserCreationAttrs> {
   })
   @HasMany(() => Product, 'fk_productuser')
   products: Product[];
+  @ApiProperty({
+      type: Discount,
+      isArray: true,
+      description: 'Скидки, которые создал данный пользователь'
+  })
+  @HasMany(() => Discount, 'fk_discountid')
+  discounts: Discount[];
 }

@@ -9,6 +9,8 @@ import {
   Model,
   Table,
 } from 'sequelize-typescript';
+import { DiscountProducts } from './discount-products.model';
+import { Discount } from './discount.model';
 import { FavoriteProducts } from './favorite-products.model';
 import { Favorite } from './favorite.model';
 import { ProductImages } from './product-images.model';
@@ -137,4 +139,11 @@ export class Product extends Model<Product, ProductCreationAttrs> {
   owner: User;
   @Column({ type: DataType.INTEGER, allowNull: true })
   fk_productuser: number;
+  @ApiProperty({
+    type: Discount,
+    isArray: true,
+    description: 'Скидки, которые действуют на данный товар',
+  })
+  @BelongsToMany(() => Discount, () => DiscountProducts)
+  discounts: Discount[];
 }

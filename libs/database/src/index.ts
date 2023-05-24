@@ -10,4 +10,6 @@ export * from './models/product.model';
 export * from './models/review.model';
 export * from './models/favorite.model';
 export * from './models/favorite-products.model';
+export * from './models/discount.model';
+export * from './models/discount-products.model';
 // DTOs
