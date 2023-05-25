@@ -5,10 +5,14 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
+import { RoleSerivce } from 'src/role/role.service';
 
 @Injectable()
 export class UserService {
-  constructor(@InjectModel(User) private userRepository: typeof User) {}
+  constructor(
+    @InjectModel(User) private userRepository: typeof User,
+    private roleService: RoleSerivce,
+  ) {}
   /**
    * Создать пользователя
    * @param {CreateUserDto} dto - DTO для создания пользователя
@@ -69,11 +73,7 @@ export class UserService {
     user.password = dto.password ? dto.password : user.password;
     await user.save();
     console.log('User was changed');
-    const updatedUser: User = await this.userRepository.findByPk(user.id);
-    if (!updatedUser) {
-      console.error('Обновленный пользователь не найден');
-      throw new NotFoundException('Обновленный пользователь не найден');
-    }
+    const updatedUser: User = await this.getOne(user.id);
     return updatedUser;
   }
   /**
@@ -86,6 +86,31 @@ export class UserService {
     console.log('Removing user...');
     await user.destroy();
     console.log('User was destroy');
+    return user;
+  }
+  /**
+   * Обновить refreshToken у пользователя
+   * @param {number} id - ID пользователя
+   * @param {string} hashToken - новый захешированный токен
+   * @returns {User} - Обновленный пользователь
+   */
+  async updateRefreshToken(id: number, hashToken: string): Promise<User> {
+    const user: User = await this.getOne(id);
+    user.refreshToken = hashToken;
+    await user.save();
+    const updatedUser: User = await this.getOne(user.id);
+    return updatedUser;
+  }
+  /**
+   * Получить пользователя по его электронной почте
+   * @param {string} email - электронная почта пользователя
+   * @returns {User} - Найденный пользователь
+   */
+  async getOneByEmail(email: string): Promise<User> {
+    const user: User = await this.userRepository.findOne({ where: { email } });
+    if (!user) {
+      throw new NotFoundException('Пользователь не найден');
+    }
     return user;
   }
 }

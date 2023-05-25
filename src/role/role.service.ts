@@ -17,9 +17,11 @@ export class RoleSerivce {
    */
   async create(dto: CreateRoleDto): Promise<Role> {
     console.log('Creating role...');
-    const candidate = await this.roleRepository.findOne({where: {value: dto.value}});
-    if(candidate) {
-        throw new BadRequestException('Такая роль уже существует');
+    const candidate = await this.roleRepository.findOne({
+      where: { value: dto.value },
+    });
+    if (candidate) {
+      throw new BadRequestException('Такая роль уже существует');
     }
     const role: Role = await this.roleRepository.create(dto);
     if (!role) {
@@ -77,13 +79,22 @@ export class RoleSerivce {
   /**
    * Удалить Role
    * @param {number} id - ID пользователя
-   * @returns {Role} - Удаленная рольк
+   * @returns {Role} - Удаленная роли
    */
   async delete(id: number): Promise<Role> {
     const role: Role = await this.getOne(id);
     console.log('Removing role...');
     await role.destroy();
     console.log('Role was destroy');
+    return role;
+  }
+  /**
+   * Получить роль по значению
+   * @param {string} value - значение роли
+   * @returns {Role} - Найденная роль
+   */
+  async getByValueWithoutThrow(value: string): Promise<Role> {
+    const role: Role = await this.roleRepository.findOne({ where: { value } });
     return role;
   }
 }

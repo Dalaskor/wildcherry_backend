@@ -37,3 +37,4 @@ export * from './dtos/create-review.dto';
 export * from './dtos/update-review.dto';
 export * from './dtos/create-discount.dto';
 export * from './dtos/update-discount.dto';
+export * from './dtos/registration.dto';

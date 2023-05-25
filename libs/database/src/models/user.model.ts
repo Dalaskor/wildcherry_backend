@@ -44,6 +44,8 @@ export class User extends Model<User, UserCreationAttrs> {
   })
   @Column({ type: DataType.STRING, allowNull: false })
   password: string;
+  @Column({ type: DataType.STRING, allowNull: true })
+  refreshToken: string;
   @ApiProperty({
     type: Role,
     isArray: true,
@@ -58,41 +60,41 @@ export class User extends Model<User, UserCreationAttrs> {
   @HasOne(() => Profile, 'fk_profileid')
   profile: Profile;
   @ApiProperty({
-      type: Review,
-      isArray: true,
-      description: 'Отзывы пользователя'
+    type: Review,
+    isArray: true,
+    description: 'Отзывы пользователя',
   })
   @HasMany(() => Review, 'fk_reviewuser')
   reviews: Review[];
   @ApiProperty({
-      type: Favorite,
-      description: 'Избарнные товары пользователя'
+    type: Favorite,
+    description: 'Избарнные товары пользователя',
   })
   @HasOne(() => Favorite, 'fk_favoriteid')
   favorite: Favorite;
   @ApiProperty({
-      type: Cart,
-      description: 'Корзина пользователя'
+    type: Cart,
+    description: 'Корзина пользователя',
   })
   @HasOne(() => Cart, 'fk_cartid')
   cart: Cart;
   @ApiProperty({
-      type: Delivery,
-      description: 'Раздел доставки пользователя'
+    type: Delivery,
+    description: 'Раздел доставки пользователя',
   })
-  @HasOne(() => Cart, 'fk_deliveryid')
-  delivery: Cart;
+  @HasOne(() => Delivery, 'fk_deliveryid')
+  delivery: Delivery;
   @ApiProperty({
-      type: Product,
-      isArray: true,
-      description: 'Товары продавца'
+    type: Product,
+    isArray: true,
+    description: 'Товары продавца',
   })
   @HasMany(() => Product, 'fk_productuser')
   products: Product[];
   @ApiProperty({
-      type: Discount,
-      isArray: true,
-      description: 'Скидки, которые создал данный пользователь'
+    type: Discount,
+    isArray: true,
+    description: 'Скидки, которые создал данный пользователь',
   })
   @HasMany(() => Discount, 'fk_discountid')
   discounts: Discount[];
