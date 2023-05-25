@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import {
-    BelongsTo,
+  BelongsTo,
   BelongsToMany,
   Column,
   DataType,
@@ -29,8 +29,8 @@ export class Favorite extends Model<Favorite> {
   @BelongsToMany(() => Product, () => FavoriteProducts)
   products: Product[];
   @ApiProperty({
-      type: User,
-      description: 'Пользователь, которому принадлежит этот раздел'
+    type: User,
+    description: 'Пользователь, которому принадлежит этот раздел',
   })
   @BelongsTo(() => User, 'fk_favoriteid')
   user: User;

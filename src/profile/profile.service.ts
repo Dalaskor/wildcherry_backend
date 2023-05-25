@@ -44,7 +44,9 @@ export class ProfileService {
    */
   async getOne(id: number): Promise<Profile> {
     console.log('Finding profile...');
-    const profile: Profile = await this.profileRepository.findByPk(id);
+    const profile: Profile = await this.profileRepository.findOne({
+      where: { fk_profileid: id },
+    });
     if (!profile) {
       console.error('Профиль не найден');
       throw new NotFoundException('Профиль не найден');
