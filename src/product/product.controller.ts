@@ -1,5 +1,6 @@
 import { CreateProductDto, Product, UpdateProductDto } from '@app/database';
 import {
+    BadRequestException,
   Body,
   Controller,
   Delete,
@@ -56,6 +57,9 @@ export class ProductController {
   })
   @Get('/:id')
   async getOne(@Param('id') id: number): Promise<Product> {
+    if (!Number(id)) {
+      throw new BadRequestException('Ошибка ввода');
+    }
     return this.productService.getOne(id);
   }
   @ApiOperation({ summary: 'Обновить товар по id' })
@@ -79,6 +83,9 @@ export class ProductController {
     @Param('id') id: number,
     @Body() dto: UpdateProductDto,
   ): Promise<Product> {
+    if (!Number(id)) {
+      throw new BadRequestException('Ошибка ввода');
+    }
     return this.productService.update(id, dto);
   }
   @ApiOperation({ summary: 'Удалить товар по id' })
@@ -95,6 +102,9 @@ export class ProductController {
   })
   @Delete('/:id')
   async delete(@Param('id') id: number): Promise<Product> {
+    if (!Number(id)) {
+      throw new BadRequestException('Ошибка ввода');
+    }
     return this.productService.delete(id);
   }
 }

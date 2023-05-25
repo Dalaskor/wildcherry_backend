@@ -1,5 +1,6 @@
 import { CreateRoleDto, Role, UpdateRoleDto } from '@app/database';
 import {
+    BadRequestException,
   Body,
   Controller,
   Delete,
@@ -53,6 +54,9 @@ export class RoleController {
   @ApiResponse({ status: HttpStatus.NOT_FOUND, description: 'Роль не найдена' })
   @Get('/:id')
   async getOne(@Param('id') id: number): Promise<Role> {
+    if (!Number(id)) {
+      throw new BadRequestException('Ошибка ввода');
+    }
     return this.roleService.getOne(id);
   }
   @ApiOperation({ summary: 'Обновить роль по id' })
@@ -73,6 +77,9 @@ export class RoleController {
     @Param('id') id: number,
     @Body() dto: UpdateRoleDto,
   ): Promise<Role> {
+    if (!Number(id)) {
+      throw new BadRequestException('Ошибка ввода');
+    }
     return this.roleService.update(id, dto);
   }
   @ApiOperation({ summary: 'Удалить роль по id' })
@@ -86,6 +93,9 @@ export class RoleController {
   @ApiResponse({ status: HttpStatus.NOT_FOUND, description: 'Роль не найдена' })
   @Delete('/:id')
   async delete(@Param('id') id: number): Promise<Role> {
+    if (!Number(id)) {
+      throw new BadRequestException('Ошибка ввода');
+    }
     return this.roleService.delete(id);
   }
 }

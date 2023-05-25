@@ -1,5 +1,6 @@
 import { CreateRewviewDto, Review, UpdateReviewDto } from '@app/database';
 import {
+    BadRequestException,
   Body,
   Controller,
   Delete,
@@ -56,6 +57,9 @@ export class ReviewController {
   })
   @Get('/:id')
   async getOne(@Param('id') id: number): Promise<Review> {
+    if (!Number(id)) {
+      throw new BadRequestException('Ошибка ввода');
+    }
     return this.reviewService.getOne(id);
   }
   @ApiOperation({ summary: 'Обновить данные отзыва на товар по id' })
@@ -79,6 +83,9 @@ export class ReviewController {
     @Param('id') id: number,
     @Body() dto: UpdateReviewDto,
   ): Promise<Review> {
+    if (!Number(id)) {
+      throw new BadRequestException('Ошибка ввода');
+    }
     return this.reviewService.update(id, dto);
   }
   @ApiOperation({ summary: 'Удалить отзыв на товар по id' })
@@ -95,6 +102,9 @@ export class ReviewController {
   })
   @Delete('/:id')
   async delete(@Param('id') id: number): Promise<Review> {
+    if (!Number(id)) {
+      throw new BadRequestException('Ошибка ввода');
+    }
     return this.reviewService.delete(id);
   }
 }

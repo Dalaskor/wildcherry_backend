@@ -1,5 +1,5 @@
 import { CreateSpecificationDto, Specification, UpdateSpecificationDto } from '@app/database';
-import { Body, Controller, Delete, Get, HttpStatus, Param, Post, Put } from '@nestjs/common';
+import { BadRequestException, Body, Controller, Delete, Get, HttpStatus, Param, Post, Put } from '@nestjs/common';
 import { ApiBody, ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { SpecificationService } from './specification.service';
 
@@ -41,6 +41,9 @@ export class SpecificationController {
   })
   @Get('/:id')
   async getOne(@Param('id') id: number): Promise<Specification> {
+    if (!Number(id)) {
+      throw new BadRequestException('Ошибка ввода');
+    }
     return this.specificationService.getOne(id);
   }
   @ApiOperation({ summary: 'Обновить характеристику по id' })
@@ -64,6 +67,9 @@ export class SpecificationController {
     @Param('id') id: number,
     @Body() dto: UpdateSpecificationDto,
   ): Promise<Specification> {
+    if (!Number(id)) {
+      throw new BadRequestException('Ошибка ввода');
+    }
     return this.specificationService.update(id, dto);
   }
   @ApiOperation({ summary: 'Удалить характеристику по id' })
@@ -80,6 +86,9 @@ export class SpecificationController {
   })
   @Delete('/:id')
   async delete(@Param('id') id: number): Promise<Specification> {
+    if (!Number(id)) {
+      throw new BadRequestException('Ошибка ввода');
+    }
     return this.specificationService.delete(id);
   }
 }

@@ -4,6 +4,7 @@ import {
   UpdateSubCategoryDto,
 } from '@app/database';
 import {
+  BadRequestException,
   Body,
   Controller,
   Delete,
@@ -60,6 +61,9 @@ export class SubCategoryController {
   })
   @Get('/:id')
   async getOne(@Param('id') id: number): Promise<SubCategory> {
+    if (!Number(id)) {
+      throw new BadRequestException('Ошибка ввода');
+    }
     return this.subCategoryService.getOne(id);
   }
   @ApiOperation({ summary: 'Обновить подкатегория товаров по id' })
@@ -83,6 +87,9 @@ export class SubCategoryController {
     @Param('id') id: number,
     @Body() dto: UpdateSubCategoryDto,
   ): Promise<SubCategory> {
+    if (!Number(id)) {
+      throw new BadRequestException('Ошибка ввода');
+    }
     return this.subCategoryService.update(id, dto);
   }
   @ApiOperation({ summary: 'Удалить подкатегорию товаров по id' })
@@ -99,6 +106,9 @@ export class SubCategoryController {
   })
   @Delete('/:id')
   async delete(@Param('id') id: number): Promise<SubCategory> {
+    if (!Number(id)) {
+      throw new BadRequestException('Ошибка ввода');
+    }
     return this.subCategoryService.delete(id);
   }
 }

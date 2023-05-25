@@ -1,6 +1,6 @@
 import { CreateProductImagesDto, UpdateProductImagesDto } from '@app/database';
 import { ProductImages } from '@app/database/models/product-images.model';
-import { Body, Controller, Delete, Get, HttpStatus, Param, Post, Put } from '@nestjs/common';
+import { BadRequestException, Body, Controller, Delete, Get, HttpStatus, Param, Post, Put } from '@nestjs/common';
 import {
   ApiBody,
   ApiOperation,
@@ -48,6 +48,9 @@ export class ProductImagesController {
   })
   @Get('/:id')
   async getOne(@Param('id') id: number): Promise<ProductImages> {
+    if (!Number(id)) {
+      throw new BadRequestException('Ошибка ввода');
+    }
     return this.productImgService.getOne(id);
   }
   @ApiOperation({ summary: 'Обновить изображение товара по id' })
@@ -71,6 +74,9 @@ export class ProductImagesController {
     @Param('id') id: number,
     @Body() dto: UpdateProductImagesDto,
   ): Promise<ProductImages> {
+    if (!Number(id)) {
+      throw new BadRequestException('Ошибка ввода');
+    }
     return this.productImgService.update(id, dto);
   }
   @ApiOperation({ summary: 'Удалить изображение товара по id' })
@@ -87,6 +93,9 @@ export class ProductImagesController {
   })
   @Delete('/:id')
   async delete(@Param('id') id: number): Promise<ProductImages> {
+    if (!Number(id)) {
+      throw new BadRequestException('Ошибка ввода');
+    }
     return this.productImgService.delete(id);
   }
 }

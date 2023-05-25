@@ -1,5 +1,6 @@
 import { CreateUserDto, UpdateUserDto, User } from '@app/database';
 import {
+  BadRequestException,
   Body,
   Controller,
   Delete,
@@ -56,6 +57,9 @@ export class UserController {
   })
   @Get('/:id')
   async getOne(@Param('id') id: number): Promise<User> {
+    if (!Number(id)) {
+      throw new BadRequestException('Ошибка ввода');
+    }
     return this.userService.getOne(id);
   }
   @ApiOperation({ summary: 'Обновить пользователя по id' })
@@ -79,6 +83,9 @@ export class UserController {
     @Param('id') id: number,
     @Body() dto: UpdateUserDto,
   ): Promise<User> {
+    if (!Number(id)) {
+      throw new BadRequestException('Ошибка ввода');
+    }
     return this.userService.update(id, dto);
   }
   @ApiOperation({ summary: 'Удалить пользователя по id' })
@@ -95,6 +102,9 @@ export class UserController {
   })
   @Delete('/:id')
   async delete(@Param('id') id: number): Promise<User> {
+    if (!Number(id)) {
+      throw new BadRequestException('Ошибка ввода');
+    }
     return this.userService.delete(id);
   }
 }

@@ -1,5 +1,5 @@
 import { CreateDiscountDto, Discount, UpdateDiscountDto } from '@app/database';
-import { Body, Controller, Delete, Get, HttpStatus, Param, Post, Put } from '@nestjs/common';
+import { BadRequestException, Body, Controller, Delete, Get, HttpStatus, Param, Post, Put } from '@nestjs/common';
 import { ApiBody, ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { DiscountService } from './discount.service';
 
@@ -41,6 +41,9 @@ export class DiscountController {
   })
   @Get('/:id')
   async getOne(@Param('id') id: number): Promise<Discount> {
+    if (!Number(id)) {
+      throw new BadRequestException('Ошибка ввода');
+    }
     return this.discountService.getOne(id);
   }
   @ApiOperation({ summary: 'Обновить акцию по id' })
@@ -64,6 +67,9 @@ export class DiscountController {
     @Param('id') id: number,
     @Body() dto: UpdateDiscountDto,
   ): Promise<Discount> {
+    if (!Number(id)) {
+      throw new BadRequestException('Ошибка ввода');
+    }
     return this.discountService.update(id, dto);
   }
   @ApiOperation({ summary: 'Удалить акцию по id' })
@@ -80,6 +86,9 @@ export class DiscountController {
   })
   @Delete('/:id')
   async delete(@Param('id') id: number): Promise<Discount> {
+    if (!Number(id)) {
+      throw new BadRequestException('Ошибка ввода');
+    }
     return this.discountService.delete(id);
   }
 }

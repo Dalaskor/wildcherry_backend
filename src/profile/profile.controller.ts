@@ -1,5 +1,5 @@
 import { CreateProfileDto, Profile, UpdateProfileDto } from '@app/database';
-import { Body, Controller, Delete, Get, HttpStatus, Param, Post, Put } from '@nestjs/common';
+import { BadRequestException, Body, Controller, Delete, Get, HttpStatus, Param, Post, Put } from '@nestjs/common';
 import { ApiBody, ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { ProfileService } from './profile.service';
 
@@ -41,6 +41,9 @@ export class ProfileController {
   })
   @Get('/:id')
   async getOne(@Param('id') id: number): Promise<Profile> {
+    if (!Number(id)) {
+      throw new BadRequestException('Ошибка ввода');
+    }
     return this.profileService.getOne(id);
   }
   @ApiOperation({ summary: 'Обновить профиль по id' })
@@ -64,6 +67,9 @@ export class ProfileController {
     @Param('id') id: number,
     @Body() dto: UpdateProfileDto,
   ): Promise<Profile> {
+    if (!Number(id)) {
+      throw new BadRequestException('Ошибка ввода');
+    }
     return this.profileService.update(id, dto);
   }
   @ApiOperation({ summary: 'Удалить профиль по id' })
@@ -80,6 +86,9 @@ export class ProfileController {
   })
   @Delete('/:id')
   async delete(@Param('id') id: number): Promise<Profile> {
+    if (!Number(id)) {
+      throw new BadRequestException('Ошибка ввода');
+    }
     return this.profileService.delete(id);
   }
 }
