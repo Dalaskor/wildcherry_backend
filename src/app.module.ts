@@ -1,4 +1,4 @@
-import { Category, SubCategory } from '@app/database';
+import { Category, DeliveryProducts, SubCategory } from '@app/database';
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { JwtModule } from '@nestjs/jwt';
@@ -58,6 +58,7 @@ import { UserModule } from './user/user.module';
     DiscountModule,
     CartModule,
     FavoriteModule,
+    DeliveryProducts,
   ],
 })
 export class AppModule {}
