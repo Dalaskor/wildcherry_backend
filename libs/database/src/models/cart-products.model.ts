@@ -18,12 +18,6 @@ export class CartProducts extends Model<CartProducts> {
     primaryKey: true,
   })
   id: number;
-  @ForeignKey(() => Cart)
-  @Column({ type: DataType.INTEGER })
-  cartId: number;
-  @ForeignKey(() => Product)
-  @Column({ type: DataType.INTEGER })
-  productId: number;
   @ApiProperty({
     example: 1,
     description: 'Количество данного товара в корзине',
@@ -33,4 +27,10 @@ export class CartProducts extends Model<CartProducts> {
     defaultValue: 1,
   })
   count: number;
+  @ForeignKey(() => Cart)
+  @Column({ type: DataType.INTEGER })
+  cartId: number;
+  @ForeignKey(() => Product)
+  @Column({ type: DataType.INTEGER })
+  productId: number;
 }

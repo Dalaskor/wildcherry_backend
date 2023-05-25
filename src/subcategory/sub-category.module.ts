@@ -10,4 +10,4 @@ import { SubCategoryService } from './sub-category.service';
   imports: [SequelizeModule.forFeature([SubCategory, Category, Product])],
   exports: [SubCategoryService],
 })
-export class UserModule {}
+export class SubCategoryModule {}

@@ -1,10 +1,11 @@
-import { Category, DeliveryProducts, SubCategory } from '@app/database';
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { JwtModule } from '@nestjs/jwt';
 import { SequelizeModule } from '@nestjs/sequelize';
 import * as Joi from 'joi';
 import { CartModule } from './cart/cart.module';
+import { CategoryModule } from './category/category.module';
+import { DeliveryModule } from './delivery/delivery.module';
 import { DiscountModule } from './discount/discount.module';
 import { FavoriteModule } from './favorite/favorite.module';
 import { ProductModule } from './product/product.module';
@@ -13,6 +14,7 @@ import { ProfileModule } from './profile/profile.module';
 import { ReviewModule } from './review/review.module';
 import { RoleModule } from './role/role.module';
 import { SpecificationModule } from './specification/specification.module';
+import { SubCategoryModule } from './subcategory/sub-category.module';
 import { UserModule } from './user/user.module';
 
 @Module({
@@ -46,11 +48,11 @@ import { UserModule } from './user/user.module';
       }),
       inject: [ConfigService],
     }),
-    UserModule,
     RoleModule,
+    UserModule,
     ProfileModule,
-    Category,
-    SubCategory,
+    CategoryModule,
+    SubCategoryModule,
     ProductModule,
     SpecificationModule,
     ProductImagesModule,
@@ -58,7 +60,7 @@ import { UserModule } from './user/user.module';
     DiscountModule,
     CartModule,
     FavoriteModule,
-    DeliveryProducts,
+    DeliveryModule,
   ],
 })
 export class AppModule {}
