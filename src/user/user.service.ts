@@ -45,6 +45,7 @@ export class UserService {
    * Получить одного User
    * @param {number} id - ID пользователя
    * @returns {User} - пользователь
+   * @throws NotFountException - пользователь не найден
    */
   async getOne(id: number): Promise<User> {
     console.log('Finding user...');
