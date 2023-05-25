@@ -4,6 +4,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { JwtModule } from '@nestjs/jwt';
 import { SequelizeModule } from '@nestjs/sequelize';
 import * as Joi from 'joi';
+import { DiscountModule } from './discount/discount.module';
 import { ProductModule } from './product/product.module';
 import { ProductImagesModule } from './product_images/product-images.module';
 import { ProfileModule } from './profile/profile.module';
@@ -52,6 +53,7 @@ import { UserModule } from './user/user.module';
     SpecificationModule,
     ProductImagesModule,
     ReviewModule,
+    DiscountModule,
   ],
 })
 export class AppModule {}

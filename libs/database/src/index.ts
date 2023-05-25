@@ -35,3 +35,5 @@ export * from './dtos/create-product-images.dto';
 export * from './dtos/update-product-images.dto';
 export * from './dtos/create-review.dto';
 export * from './dtos/update-review.dto';
+export * from './dtos/create-discount.dto';
+export * from './dtos/update-discount.dto';
