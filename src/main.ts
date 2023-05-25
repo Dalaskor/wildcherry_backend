@@ -10,6 +10,7 @@ async function bootstrap() {
     .setTitle('Wildcherry')
     .setDescription('Документация по REST API сервиса Wildcherry')
     .setVersion('1.0.0')
+    .addBearerAuth()
     .build();
   app.enableCors();
   const document = SwaggerModule.createDocument(app, swaggerConfig);

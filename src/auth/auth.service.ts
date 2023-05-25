@@ -103,6 +103,8 @@ export class AuthService {
     user.roles = [role];
     await user.save();
     const tokens: JwtOutput = await this.generateTokens(user);
+    const hashRefresh = await bcrypt.hash(tokens.refreshToken, 5);
+    await this.userService.updateRefreshToken(user.id, hashRefresh);
     return tokens;
   }
   /**
@@ -137,6 +139,8 @@ export class AuthService {
     user.roles = [roleUser, roleSeller];
     await user.save();
     const tokens: JwtOutput = await this.generateTokens(user);
+    const hashRefresh = await bcrypt.hash(tokens.refreshToken, 5);
+    await this.userService.updateRefreshToken(user.id, hashRefresh);
     return tokens;
   }
   /**
@@ -180,7 +184,16 @@ export class AuthService {
     await user.$set('roles', [roleUser.id, roleSeller.id, roleAdmin.id]);
     user.roles = [roleUser, roleSeller, roleAdmin];
     const tokens: JwtOutput = await this.generateTokens(user);
+    const hashRefresh = await bcrypt.hash(tokens.refreshToken, 5);
+    await this.userService.updateRefreshToken(user.id, hashRefresh);
     return tokens;
+  }
+  /**
+   * Сбросить пользователю refreshToken
+   * @param {number} user_id - ID пользователя
+   */
+  async logout(user_id: number): Promise<User> {
+    return await this.userService.removeRefreshToken(user_id);
   }
   /**
    * Обновления токенов для пользователя

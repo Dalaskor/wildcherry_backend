@@ -1,4 +1,10 @@
-import { CreateUserDto, UpdateUserDto, User } from '@app/database';
+import {
+  CreateUserDto,
+  Role,
+  UpdateUserDto,
+  User,
+  UserAddRoleDto,
+} from '@app/database';
 import {
   BadRequestException,
   Injectable,
@@ -53,7 +59,10 @@ export class UserService {
    */
   async getOne(id: number): Promise<User> {
     console.log('Finding user...');
-    const user: User = await this.userRepository.findByPk(id);
+    const user: User = await this.userRepository.findOne({
+      where: { id },
+      include: { all: true },
+    });
     if (!user) {
       console.error('Пользователь не найден');
       throw new NotFoundException('Пользователь не найден');
@@ -102,6 +111,18 @@ export class UserService {
     return updatedUser;
   }
   /**
+   * Удалить refreshToken у пользователя
+   * @param {number} id - ID пользователя
+   * @returns {User} - Обновленный пользователь
+   */
+  async removeRefreshToken(id: number): Promise<User> {
+    const user: User = await this.getOne(id);
+    user.refreshToken = null;
+    await user.save();
+    const updatedUser: User = await this.getOne(user.id);
+    return updatedUser;
+  }
+  /**
    * Получить пользователя по его электронной почте
    * @param {string} email - электронная почта пользователя
    * @returns {User} - Найденный пользователь
@@ -111,6 +132,34 @@ export class UserService {
     if (!user) {
       throw new NotFoundException('Пользователь не найден');
     }
+    return user;
+  }
+  /**
+   * Добавить роль пользователию
+   * @param {UserAddRoleDto} dto - DTO для добавления роли пользователю
+   * @returns {User} - Пользователь
+   */
+  async addRole(dto: UserAddRoleDto): Promise<User> {
+    const user: User = await this.getOne(dto.user_id);
+    const role: Role = await this.roleService.getOne(dto.role_id);
+    if (!user.roles) {
+      await user.$set('roles', []);
+      user.roles = [];
+    }
+    await user.$add('roles', role.id);
+    user.roles.push(role);
+    await user.save();
+    return user;
+  }
+  /**
+   * Удалить роль пользователию
+   * @param {UserAddRoleDto} dto - DTO для добавления роли пользователю
+   * @returns {User} - Пользователь
+   */
+  async removeRole(dto: UserAddRoleDto): Promise<User> {
+    const user: User = await this.getOne(dto.user_id);
+    const role: Role = await this.roleService.getOne(dto.role_id);
+    await user.$remove('roles', role.id);
     return user;
   }
 }

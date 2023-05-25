@@ -1,4 +1,9 @@
-import { CreateUserDto, UpdateUserDto, User } from '@app/database';
+import {
+  UpdateUserDto,
+  User,
+  UserAddRoleDto,
+  UserRemoveRoleDto,
+} from '@app/database';
 import {
   BadRequestException,
   Body,
@@ -7,7 +12,6 @@ import {
   Get,
   HttpStatus,
   Param,
-  Post,
   Put,
 } from '@nestjs/common';
 import {
@@ -23,25 +27,37 @@ import { UserService } from './user.service';
 @Controller('user')
 export class UserController {
   constructor(private userService: UserService) {}
-  @ApiOperation({ summary: 'Создание нового пользователя' })
-  @ApiBody({
-    type: CreateUserDto,
-    description: 'DTO для создания пользователя',
-  })
-  @ApiResponse({ status: HttpStatus.CREATED, type: User })
-  @ApiResponse({
-    status: HttpStatus.BAD_REQUEST,
-    description: 'Ошибка при создании пользователя',
-  })
-  @Post()
-  async create(@Body() dto: CreateUserDto): Promise<User> {
-    return this.userService.create(dto);
-  }
   @ApiOperation({ summary: 'Получить всех пользователей' })
   @ApiResponse({ status: HttpStatus.OK, type: User, isArray: true })
   @Get()
   async getAll(): Promise<User[]> {
     return this.userService.getAll();
+  }
+  @ApiOperation({ summary: 'Добавить роль пользователю' })
+  @ApiBody({
+    type: UserAddRoleDto,
+    description: 'DTO для добавления роли',
+  })
+  @ApiResponse({
+    type: User,
+    description: 'Пользователь',
+  })
+  @Put('role')
+  async addRole(@Body() dto: UserAddRoleDto): Promise<User> {
+    return await this.userService.addRole(dto);
+  }
+  @ApiOperation({ summary: 'Удалить роль пользователю' })
+  @ApiBody({
+    type: UserRemoveRoleDto,
+    description: 'DTO для удаления роли',
+  })
+  @ApiResponse({
+    type: User,
+    description: 'Пользователь',
+  })
+  @Delete('role')
+  async removeRole(@Body() dto: UserRemoveRoleDto): Promise<User> {
+    return await this.userService.removeRole(dto);
   }
   @ApiOperation({ summary: 'Получить одного пользователя по id' })
   @ApiParam({

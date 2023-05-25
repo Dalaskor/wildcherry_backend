@@ -1,7 +1,25 @@
 import { JwtOutput } from '@app/common';
-import { CreateUserDto, RegistrationDto } from '@app/database';
-import { Body, Controller, HttpStatus, Post } from '@nestjs/common';
-import { ApiBody, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { CreateUserDto, RegistrationDto, User } from '@app/database';
+import {
+  BadRequestException,
+  Body,
+  Controller,
+  Get,
+  HttpStatus,
+  Param,
+  Post,
+  Put,
+  Req,
+} from '@nestjs/common';
+import {
+    ApiBearerAuth,
+  ApiBody,
+  ApiHeader,
+  ApiOperation,
+  ApiParam,
+  ApiResponse,
+  ApiTags,
+} from '@nestjs/swagger';
 import { AuthService } from './auth.service';
 
 @ApiTags('Авторизация и регистрация')
@@ -64,5 +82,51 @@ export class AuthController {
   @Post('registration/admin')
   async registrationAdmin(@Body() dto: RegistrationDto): Promise<JwtOutput> {
     return this.authService.registrationAdmin(dto);
+  }
+  @ApiOperation({ summary: 'Разлогинить пользователя (сбросить рефреш токен)' })
+  @ApiBearerAuth()
+  @ApiParam({
+    name: 'id',
+    type: Number,
+    description: 'ID пользователя',
+    example: 1,
+  })
+  @ApiResponse({
+    type: User,
+    description: 'Пользователь, который разлогинился',
+  })
+  @Get('logout/:id')
+  async logout(@Param('id') id: number): Promise<User> {
+    if (!Number(id)) {
+      throw new BadRequestException('Ошибка ввода');
+    }
+    return this.authService.logout(id);
+  }
+  @ApiOperation({
+    summary:
+      'Обновить JWT токены пользователя (Требуется refreshToken в заголовках)',
+  })
+  @ApiParam({
+    name: 'id',
+    type: Number,
+    description: 'ID пользователя',
+    example: 1,
+  })
+  @ApiHeader({ name: 'refreshToken', example: 'asdfkljLKjasdf' })
+  @ApiResponse({
+    type: JwtOutput,
+    status: HttpStatus.OK,
+    description: 'JWT токены',
+  })
+  @Put('refresh/:id')
+  async refreshTokens(
+    @Param('id') id: number,
+    @Req() req: any,
+  ): Promise<JwtOutput> {
+    const token: string = req.refreshToken;
+    if (!Number(id) || token) {
+      throw new BadRequestException('Ошибка ввода');
+    }
+    return this.authService.updateTokens(id, token);
   }
 }

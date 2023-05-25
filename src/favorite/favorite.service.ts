@@ -31,6 +31,7 @@ export class FavoriteService {
     console.log('Finding favorite...');
     const favorite: Favorite = await this.favoriteRepository.findOne({
       where: { fk_favoriteid: id },
+      include: { all: true },
     });
     if (!favorite) {
       console.error('Раздел избранного не найден');

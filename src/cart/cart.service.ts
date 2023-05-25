@@ -29,6 +29,7 @@ export class CartService {
     console.log('Finding cart...');
     const cart: Cart = await this.cartRepository.findOne({
       where: { fk_cartid: id },
+      include: { all: true },
     });
     if (!cart) {
       console.error('Корзина не найдена');

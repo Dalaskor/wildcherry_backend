@@ -31,6 +31,7 @@ export class DeliveryService {
     console.log('Finding delivery...');
     const delivery: Delivery = await this.deliveryRepository.findOne({
       where: { fk_deliveryid: id },
+      include: { all: true },
     });
     if (!delivery) {
       console.error('Доставка не найдена');
