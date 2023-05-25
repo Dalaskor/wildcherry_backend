@@ -33,3 +33,5 @@ export * from './dtos/create-sub-category.dto';
 export * from './dtos/update-sub-category.dto';
 export * from './dtos/create-product-images.dto';
 export * from './dtos/update-product-images.dto';
+export * from './dtos/create-review.dto';
+export * from './dtos/update-review.dto';

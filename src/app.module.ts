@@ -7,6 +7,7 @@ import * as Joi from 'joi';
 import { ProductModule } from './product/product.module';
 import { ProductImagesModule } from './product_images/product-images.module';
 import { ProfileModule } from './profile/profile.module';
+import { ReviewModule } from './review/review.module';
 import { RoleModule } from './role/role.module';
 import { SpecificationModule } from './specification/specification.module';
 import { UserModule } from './user/user.module';
@@ -50,6 +51,7 @@ import { UserModule } from './user/user.module';
     ProductModule,
     SpecificationModule,
     ProductImagesModule,
+    ReviewModule,
   ],
 })
 export class AppModule {}
