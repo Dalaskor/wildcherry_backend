@@ -103,6 +103,9 @@ export class ProductService {
     );
     const imgs: ProductImages[] = [];
     const imgsId: number[] = [];
+    if (!Array.isArray(dto.images)) {
+      dto.images = [dto.images];
+    }
     for (const item of dto.images) {
       const img: ProductImages = await this.productImgService.create({
         url: item,
@@ -176,6 +179,9 @@ export class ProductService {
     }
     const imgs: ProductImages[] = [];
     const imgsId: number[] = [];
+    if (!Array.isArray(dto.images)) {
+      dto.images = [dto.images];
+    }
     for (const item of dto.images) {
       const img: ProductImages = await this.productImgService.create({
         url: item,

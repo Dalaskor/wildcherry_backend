@@ -1,4 +1,4 @@
-import { Product, Profile, Review, User } from '@app/database';
+import { Discount, Product, Profile, Review, User } from '@app/database';
 import {
   Ability,
   AbilityBuilder,
@@ -11,7 +11,13 @@ import { ACTIONS } from '../consts/action.enum';
 import { ROLES } from '../consts/roles.enum';
 
 export type Subjects =
-  | InferSubjects<typeof User | typeof Profile | typeof Product | typeof Review>
+  | InferSubjects<
+      | typeof User
+      | typeof Profile
+      | typeof Product
+      | typeof Review
+      | typeof Discount
+    >
   | 'all';
 export type AppAbility = Ability<[ACTIONS, Subjects]>;
 
@@ -38,14 +44,22 @@ export class AbilityFactory {
       can(ACTIONS.UPDATE, Review);
       can(ACTIONS.DELETE, Review);
       can(ACTIONS.READ, Review);
+      can(ACTIONS.CREATE, Discount);
+      can(ACTIONS.UPDATE, Discount);
+      can(ACTIONS.DELETE, Discount);
+      can(ACTIONS.READ, Discount);
     } else if (this.checkSeller(user)) {
       can(ACTIONS.CREATE, Product, { fk_productuser: user.id });
       can(ACTIONS.UPDATE, Product, { fk_productuser: user.id });
       can(ACTIONS.DELETE, Product, { fk_productuser: user.id });
+      can(ACTIONS.UPDATE, Discount, { fk_discountid: user.id });
+      can(ACTIONS.DELETE, Discount, { fk_discountid: user.id });
+      can(ACTIONS.READ, Discount, { fk_discountid: user.id });
     } else {
       can(ACTIONS.READ, Profile);
       can(ACTIONS.READ, Product);
       can(ACTIONS.READ, Review);
+      can(ACTIONS.READ, Discount);
     }
     can(ACTIONS.READ, User, { id: user.id });
     can(ACTIONS.UPDATE, User, { id: user.id });

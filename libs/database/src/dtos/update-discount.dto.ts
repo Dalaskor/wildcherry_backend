@@ -27,4 +27,11 @@ export class UpdateDiscountDto {
   @IsInt({ message: 'поле "value" - должно быть целым числом' })
   @IsOptional()
   value?: number;
+  @ApiPropertyOptional({
+    example: 1,
+    description: 'ID товара, на который написан отзыв',
+    isArray: true,
+  })
+  @IsInt({ message: 'поле "product" должно быть целым числом', each: true })
+  products?: number[];
 }

@@ -18,4 +18,17 @@ export class CreateDiscountDto {
   @Max(100)
   @IsInt({ message: 'поле "value" - должно быть целым числом' })
   value: number;
+  @ApiProperty({
+    example: 1,
+    description: 'ID товара, на который написан отзыв',
+    isArray: true,
+  })
+  @IsInt({ message: 'поле "product" должно быть целым числом', each: true })
+  products: number[];
+  @ApiProperty({
+    example: 1,
+    description: 'ID пользователя, который создал акцию',
+  })
+  @IsInt({ message: 'поле "user" должно быть целым числом' })
+  user: number;
 }

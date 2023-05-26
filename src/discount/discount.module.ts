@@ -1,6 +1,10 @@
 import { Discount, DiscountProducts, Product, User } from '@app/database';
-import { Module } from '@nestjs/common';
+import { forwardRef, Module } from '@nestjs/common';
 import { SequelizeModule } from '@nestjs/sequelize';
+import { AbilityModule } from 'src/ability/ability.module';
+import { AuthModule } from 'src/auth/auth.module';
+import { ProductModule } from 'src/product/product.module';
+import { UserModule } from 'src/user/user.module';
 import { DiscountController } from './discount.controller';
 import { DiscountService } from './discount.service';
 
@@ -9,6 +13,10 @@ import { DiscountService } from './discount.service';
   controllers: [DiscountController],
   imports: [
     SequelizeModule.forFeature([Discount, User, Product, DiscountProducts]),
+    UserModule,
+    ProductModule,
+    AbilityModule,
+    forwardRef(() => AuthModule),
   ],
   exports: [DiscountService],
 })
