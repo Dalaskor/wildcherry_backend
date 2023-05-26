@@ -1,3 +1,4 @@
+import { ROLES, Roles, RolesGuard } from '@app/common';
 import {
   CreateSubCategoryDto,
   SubCategory,
@@ -13,8 +14,10 @@ import {
   Param,
   Post,
   Put,
+  UseGuards,
 } from '@nestjs/common';
 import {
+  ApiBearerAuth,
   ApiBody,
   ApiOperation,
   ApiParam,
@@ -27,7 +30,10 @@ import { SubCategoryService } from './sub-category.service';
 @Controller('subcategory')
 export class SubCategoryController {
   constructor(private subCategoryService: SubCategoryService) {}
-  @ApiOperation({ summary: 'Создание новой подкатегории товаров' })
+  @ApiOperation({
+    summary: 'Создание новой подкатегории товаров',
+    description: 'Треубется роль ADMIN',
+  })
   @ApiBody({
     type: CreateSubCategoryDto,
     description: 'DTO для создания подкатегории товаров',
@@ -37,6 +43,9 @@ export class SubCategoryController {
     status: HttpStatus.BAD_REQUEST,
     description: 'Ошибка при создании подкатегории товаров',
   })
+  @ApiBearerAuth()
+  @Roles(ROLES.ADMIN)
+  @UseGuards(RolesGuard)
   @Post()
   async create(@Body() dto: CreateSubCategoryDto): Promise<SubCategory> {
     return this.subCategoryService.create(dto);
@@ -66,7 +75,10 @@ export class SubCategoryController {
     }
     return this.subCategoryService.getOne(id);
   }
-  @ApiOperation({ summary: 'Обновить подкатегория товаров по id' })
+  @ApiOperation({
+    summary: 'Обновить подкатегория товаров по id',
+    description: 'Требуется роль ADMIN',
+  })
   @ApiParam({
     name: 'id',
     type: Number,
@@ -82,6 +94,9 @@ export class SubCategoryController {
     status: HttpStatus.NOT_FOUND,
     description: 'Подкатегория товаров не найдена',
   })
+  @ApiBearerAuth()
+  @Roles(ROLES.ADMIN)
+  @UseGuards(RolesGuard)
   @Put('/:id')
   async update(
     @Param('id') id: number,
@@ -92,7 +107,7 @@ export class SubCategoryController {
     }
     return this.subCategoryService.update(id, dto);
   }
-  @ApiOperation({ summary: 'Удалить подкатегорию товаров по id' })
+  @ApiOperation({ summary: 'Удалить подкатегорию товаров по id', description: 'Требуется роль ADMIN' })
   @ApiParam({
     name: 'id',
     type: Number,
@@ -104,6 +119,9 @@ export class SubCategoryController {
     status: HttpStatus.NOT_FOUND,
     description: 'Подкатегория товаров не найдена',
   })
+  @ApiBearerAuth()
+  @Roles(ROLES.ADMIN)
+  @UseGuards(RolesGuard)
   @Delete('/:id')
   async delete(@Param('id') id: number): Promise<SubCategory> {
     if (!Number(id)) {
