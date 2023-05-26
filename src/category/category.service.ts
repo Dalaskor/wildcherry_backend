@@ -18,9 +18,11 @@ export class CategoryService {
    * @throws BadRequestException - ошибка создания категории
    */
   async create(dto: CreateCategoryDto): Promise<Category> {
-    const candidate = await this.categoryRepository.findOne({where: {name: dto.name}});
-    if(candidate) {
-        throw new BadRequestException('Такая категория товаров уже существует');
+    const candidate = await this.categoryRepository.findOne({
+      where: { name: dto.name },
+    });
+    if (candidate) {
+      throw new BadRequestException('Такая категория товаров уже существует');
     }
     console.log('Creating category...');
     const category: Category = await this.categoryRepository.create(dto);
@@ -48,7 +50,10 @@ export class CategoryService {
    */
   async getOne(id: number): Promise<Category> {
     console.log('Finding category...');
-    const category: Category = await this.categoryRepository.findByPk(id);
+    const category: Category = await this.categoryRepository.findOne({
+      where: { id },
+      include: { all: true },
+    });
     if (!category) {
       console.error('Категория не найдена');
       throw new NotFoundException('Категория не найдена');

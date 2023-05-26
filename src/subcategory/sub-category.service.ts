@@ -77,6 +77,21 @@ export class SubCategoryService {
     return subCategory;
   }
   /**
+   * Получить все подкатегории товаров
+   * @param {number} category - ID родительской категории
+   * @returns {SubCategory[]} - массив подкатегорий
+   */
+  async getAllByCategory(category: number): Promise<SubCategory[]> {
+    console.log('Found all sub-categories by category...');
+    const subCategory: SubCategory[] = await this.subCategoryRepository.findAll(
+      {
+        include: { model: Category, where: { id: category } },
+      },
+    );
+    console.log('Found result');
+    return subCategory;
+  }
+  /**
    * Получить одну подкатегорию товаров
    * @param {number} id - ID подкатегории товаров
    * @returns {SubCategory} - найденная подкатегория товаров

@@ -56,6 +56,23 @@ export class SubCategoryController {
   async getAll(): Promise<SubCategory[]> {
     return this.subCategoryService.getAll();
   }
+  @ApiOperation({
+    summary: 'Получить все подкатегории товаров находящихся в категории',
+  })
+  @ApiParam({
+    name: 'id',
+    type: Number,
+    description: 'ID родительской категории',
+    example: 1,
+  })
+  @ApiResponse({ status: HttpStatus.OK, type: SubCategory, isArray: true })
+  @Get('parent/:id')
+  async getAllByCategory(@Param('id') id: number): Promise<SubCategory[]> {
+    if(!Number(id)) {
+        throw new BadRequestException('Ошибка ввода')
+    }
+    return this.subCategoryService.getAllByCategory(id);
+  }
   @ApiOperation({ summary: 'Получить одну подкатегорию товаров по id' })
   @ApiParam({
     name: 'id',
@@ -107,7 +124,10 @@ export class SubCategoryController {
     }
     return this.subCategoryService.update(id, dto);
   }
-  @ApiOperation({ summary: 'Удалить подкатегорию товаров по id', description: 'Требуется роль ADMIN' })
+  @ApiOperation({
+    summary: 'Удалить подкатегорию товаров по id',
+    description: 'Требуется роль ADMIN',
+  })
   @ApiParam({
     name: 'id',
     type: Number,
