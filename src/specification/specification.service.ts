@@ -52,7 +52,9 @@ export class SpecificationService {
   async getOne(id: number): Promise<Specification> {
     console.log('Finding specification...');
     const specification: Specification =
-      await this.specificationRepository.findByPk(id);
+      await this.specificationRepository.findOne({
+        where: { fk_specificationid: id },
+      });
     if (!specification) {
       console.error('Характеристика не найдена');
       throw new NotFoundException('Характеристика не найдена');

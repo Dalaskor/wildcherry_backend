@@ -1,5 +1,10 @@
-import { Roles, ROLES, RolesGuard } from '@app/common';
-import { Product, RegisterProductDto, UpdateProductDto } from '@app/database';
+import { JwtAuthGuard, Roles, ROLES, RolesGuard } from '@app/common';
+import {
+  Product,
+  RegisterProductDto,
+  UpdateProductDto,
+  User,
+} from '@app/database';
 import {
   BadRequestException,
   Body,
@@ -10,6 +15,7 @@ import {
   Param,
   Post,
   Put,
+  Req,
   UseGuards,
 } from '@nestjs/common';
 import {
@@ -87,15 +93,19 @@ export class ProductController {
     status: HttpStatus.NOT_FOUND,
     description: 'Товар не найден',
   })
+  @ApiBearerAuth()
+  @UseGuards(JwtAuthGuard)
   @Put('/:id')
   async update(
     @Param('id') id: number,
     @Body() dto: UpdateProductDto,
+    @Req() req: any,
   ): Promise<Product> {
     if (!Number(id)) {
       throw new BadRequestException('Ошибка ввода');
     }
-    return this.productService.update(id, dto);
+    const user: User = req.user;
+    return this.productService.update(id, dto, user);
   }
   @ApiOperation({ summary: 'Удалить товар по id' })
   @ApiParam({
@@ -109,11 +119,14 @@ export class ProductController {
     status: HttpStatus.NOT_FOUND,
     description: 'Товар не найден',
   })
+  @ApiBearerAuth()
+  @UseGuards(JwtAuthGuard)
   @Delete('/:id')
-  async delete(@Param('id') id: number): Promise<Product> {
+  async delete(@Param('id') id: number, @Req() req: any): Promise<Product> {
     if (!Number(id)) {
       throw new BadRequestException('Ошибка ввода');
     }
-    return this.productService.delete(id);
+    const user: User = req.user;
+    return this.productService.delete(id, user);
   }
 }

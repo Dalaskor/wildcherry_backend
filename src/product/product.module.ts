@@ -15,6 +15,7 @@ import {
 } from '@app/database';
 import { forwardRef, Module } from '@nestjs/common';
 import { SequelizeModule } from '@nestjs/sequelize';
+import { AbilityModule } from 'src/ability/ability.module';
 import { AuthModule } from 'src/auth/auth.module';
 import { ProductImagesModule } from 'src/product_images/product-images.module';
 import { SpecificationModule } from 'src/specification/specification.module';
@@ -46,6 +47,7 @@ import { ProductService } from './product.service';
     SubCategoryModule,
     SpecificationModule,
     ProductImagesModule,
+    AbilityModule,
     forwardRef(() => AuthModule),
   ],
   exports: [ProductService],

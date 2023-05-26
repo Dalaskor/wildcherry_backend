@@ -1,4 +1,8 @@
-import { CreateProductImagesDto, UpdateProductImagesDto } from '@app/database';
+import {
+  CreateProductImagesDto,
+  Product,
+  UpdateProductImagesDto,
+} from '@app/database';
 import { ProductImages } from '@app/database/models/product-images.model';
 import {
   BadRequestException,
@@ -35,6 +39,22 @@ export class ProductImagesService {
   async getAll(): Promise<ProductImages[]> {
     console.log('Found all productImages...');
     const productImgs: ProductImages[] = await this.productImgsRepo.findAll();
+    console.log('Found result');
+    return productImgs;
+  }
+  /**
+   * Получить все изображения по товару
+   * @param {number} product - ID товара
+   * @returns {ProductImages[]} - массив изображений товаров
+   */
+  async getAllByProduct(product: number): Promise<ProductImages[]> {
+    console.log('Found all productImages by product...');
+    const productImgs: ProductImages[] = await this.productImgsRepo.findAll({
+      include: {
+        model: Product,
+        where: { id: product },
+      },
+    });
     console.log('Found result');
     return productImgs;
   }
