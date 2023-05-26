@@ -15,7 +15,7 @@ async function bootstrap() {
   app.enableCors();
   const document = SwaggerModule.createDocument(app, swaggerConfig);
   SwaggerModule.setup('/docs', app, document);
-  const PORT = Number(configService.get('PORT')) || 3000;
+  const PORT = Number(configService.get('PORT')) || 5000;
   await app.listen(PORT, () => {
     console.log(`The server has been started on port ${PORT}`);
   });
