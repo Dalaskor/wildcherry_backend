@@ -1,4 +1,4 @@
-import { JwtOutput } from '@app/common';
+import { JwtAuthGuard, JwtOutput, ROLES, Roles } from '@app/common';
 import { CreateUserDto, RegistrationDto, User } from '@app/database';
 import {
   BadRequestException,
@@ -10,6 +10,7 @@ import {
   Post,
   Put,
   Req,
+  UseGuards,
 } from '@nestjs/common';
 import {
     ApiBearerAuth,
@@ -95,6 +96,7 @@ export class AuthController {
     type: User,
     description: 'Пользователь, который разлогинился',
   })
+  @UseGuards(JwtAuthGuard)
   @Get('logout/:id')
   async logout(@Param('id') id: number): Promise<User> {
     if (!Number(id)) {

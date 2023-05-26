@@ -1,8 +1,8 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
-import { JwtModule } from '@nestjs/jwt';
 import { SequelizeModule } from '@nestjs/sequelize';
 import * as Joi from 'joi';
+import { AbilityModule } from './ability/ability.module';
 import { AuthModule } from './auth/auth.module';
 import { CartModule } from './cart/cart.module';
 import { CategoryModule } from './category/category.module';
@@ -41,6 +41,7 @@ import { UserModule } from './user/user.module';
       inject: [ConfigService],
     }),
     AuthModule,
+    AbilityModule,
     RoleModule,
     UserModule,
     ProfileModule,

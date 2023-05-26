@@ -1,3 +1,4 @@
+import { ACTIONS } from '@app/common';
 import {
   CreateUserDto,
   Role,
@@ -11,6 +12,7 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
+import { AbilityService } from 'src/ability/ability.service';
 import { RoleSerivce } from 'src/role/role.service';
 
 @Injectable()
@@ -18,6 +20,7 @@ export class UserService {
   constructor(
     @InjectModel(User) private userRepository: typeof User,
     private roleService: RoleSerivce,
+    private abilityService: AbilityService,
   ) {}
   /**
    * Создать пользователя
@@ -59,7 +62,7 @@ export class UserService {
    */
   async getOne(id: number): Promise<User> {
     console.log('Finding user...');
-    const user: User = await this.userRepository.findOne({
+    const user = await this.userRepository.findOne({
       where: { id },
       include: { all: true },
     });
@@ -71,13 +74,25 @@ export class UserService {
     return user;
   }
   /**
+   * Получить одного User с проверкой CASL
+   * @param {number} id - ID пользователя
+   * @returns {User} - пользователь
+   * @throws NotFountException - пользователь не найден
+   */
+  async getOneWithCasl(id: number, req_user: User): Promise<User> {
+    const user: User = await this.getOne(id);
+    this.abilityService.checkAbility(req_user, user, ACTIONS.READ);
+    return user;
+  }
+  /**
    * Обновить данные модели User
    * @param {number} id - ID пользователя
    * @param {UpdateUserDto} dto - DTO для обновления данных User
    * @returns {User} - Обновленный пользователь
    */
-  async update(id: number, dto: UpdateUserDto): Promise<User> {
+  async update(id: number, dto: UpdateUserDto, req_user: User): Promise<User> {
     const user: User = await this.getOne(id);
+    this.abilityService.checkAbility(req_user, user, ACTIONS.UPDATE);
     console.log('User changing...');
     user.password = dto.password ? dto.password : user.password;
     await user.save();
@@ -128,7 +143,10 @@ export class UserService {
    * @returns {User} - Найденный пользователь
    */
   async getOneByEmail(email: string): Promise<User> {
-    const user: User = await this.userRepository.findOne({ where: { email } });
+    const user: User = await this.userRepository.findOne({
+      where: { email },
+      include: { model: Role },
+    });
     if (!user) {
       throw new NotFoundException('Пользователь не найден');
     }

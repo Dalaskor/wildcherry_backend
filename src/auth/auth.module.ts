@@ -31,6 +31,6 @@ import { AuthService } from './auth.service';
       inject: [ConfigService],
     }),
   ],
-  exports: [AuthService],
+  exports: [AuthService, JwtModule],
 })
 export class AuthModule {}

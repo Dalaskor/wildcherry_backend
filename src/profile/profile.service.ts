@@ -1,15 +1,24 @@
-import { CreateProfileDto, Profile, UpdateProfileDto } from '@app/database';
+import { ACTIONS } from '@app/common';
+import {
+  CreateProfileDto,
+  Profile,
+  UpdateProfileDto,
+  User,
+} from '@app/database';
 import {
   BadRequestException,
   Injectable,
   NotFoundException,
+  UnauthorizedException,
 } from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
+import { AbilityService } from 'src/ability/ability.service';
 
 @Injectable()
 export class ProfileService {
   constructor(
     @InjectModel(Profile) private profileRepository: typeof Profile,
+    private abilityService: AbilityService,
   ) {}
   /**
    * Создать профиль пользователя
@@ -46,6 +55,7 @@ export class ProfileService {
     console.log('Finding profile...');
     const profile: Profile = await this.profileRepository.findOne({
       where: { fk_profileid: id },
+      include: { all: true },
     });
     if (!profile) {
       console.error('Профиль не найден');
@@ -60,8 +70,9 @@ export class ProfileService {
    * @param {UpdateProfileDto} dto - DTO для обновления данных профиля
    * @returns {Profile} - Обновленный профиль
    */
-  async update(id: number, dto: UpdateProfileDto): Promise<Profile> {
+  async update(id: number, dto: UpdateProfileDto, user: User): Promise<Profile> {
     const profile: Profile = await this.getOne(id);
+    this.abilityService.checkAbility(user, profile, ACTIONS.UPDATE);
     console.log('Profile changing...');
     profile.name = dto.name ? dto.name : profile.name;
     profile.surname = dto.surname ? dto.surname : profile.surname;

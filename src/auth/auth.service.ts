@@ -17,7 +17,7 @@ import { ProfileService } from 'src/profile/profile.service';
 import { RoleSerivce } from 'src/role/role.service';
 import { UserService } from 'src/user/user.service';
 import * as bcrypt from 'bcryptjs';
-import { JwtOutput, JwtPayload, ROLES } from '@app/common';
+import { ACTIONS, JwtOutput, JwtPayload, ROLES } from '@app/common';
 import { ConfigService } from '@nestjs/config';
 import {
   ForbiddenException,
@@ -260,5 +260,22 @@ export class AuthService {
     };
     console.log('JWT tokens was generated');
     return output;
+  }
+  getUserFromReq(req: any): User {
+    const authHeader = req.headers.authorization;
+    if (authHeader === undefined) {
+      throw new UnauthorizedException({
+        message: 'Пользователь не авторизован',
+      });
+    }
+    const bearer = authHeader.split(' ')[0];
+    const token = authHeader.split(' ')[1];
+    if (bearer !== 'Bearer' || !token) {
+      throw new UnauthorizedException({
+        message: 'Пользователь не авторизован',
+      });
+    }
+    const user: User = this.jwtService.verify(token);
+    return user;
   }
 }

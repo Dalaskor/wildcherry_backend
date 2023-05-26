@@ -1,3 +1,4 @@
+import { JwtAuthGuard, ROLES, Roles, RolesGuard } from '@app/common';
 import {
   UpdateUserDto,
   User,
@@ -13,8 +14,11 @@ import {
   HttpStatus,
   Param,
   Put,
+  Req,
+  UseGuards,
 } from '@nestjs/common';
 import {
+  ApiBearerAuth,
   ApiBody,
   ApiOperation,
   ApiParam,
@@ -27,13 +31,22 @@ import { UserService } from './user.service';
 @Controller('user')
 export class UserController {
   constructor(private userService: UserService) {}
-  @ApiOperation({ summary: 'Получить всех пользователей' })
+  @ApiOperation({
+    summary: 'Получить всех пользователей',
+    description: 'Требуется роль ADMIN',
+  })
   @ApiResponse({ status: HttpStatus.OK, type: User, isArray: true })
+  @ApiBearerAuth()
+  @Roles(ROLES.ADMIN)
+  @UseGuards(RolesGuard)
   @Get()
   async getAll(): Promise<User[]> {
     return this.userService.getAll();
   }
-  @ApiOperation({ summary: 'Добавить роль пользователю' })
+  @ApiOperation({
+    summary: 'Добавить роль пользователю',
+    description: 'Требуется роль ADMIN',
+  })
   @ApiBody({
     type: UserAddRoleDto,
     description: 'DTO для добавления роли',
@@ -42,11 +55,17 @@ export class UserController {
     type: User,
     description: 'Пользователь',
   })
+  @ApiBearerAuth()
+  @Roles(ROLES.ADMIN)
+  @UseGuards(RolesGuard)
   @Put('role')
   async addRole(@Body() dto: UserAddRoleDto): Promise<User> {
     return await this.userService.addRole(dto);
   }
-  @ApiOperation({ summary: 'Удалить роль пользователю' })
+  @ApiOperation({
+    summary: 'Удалить роль пользователю',
+    description: 'Требуется роль ADMIN',
+  })
   @ApiBody({
     type: UserRemoveRoleDto,
     description: 'DTO для удаления роли',
@@ -55,6 +74,9 @@ export class UserController {
     type: User,
     description: 'Пользователь',
   })
+  @ApiBearerAuth()
+  @Roles(ROLES.ADMIN)
+  @UseGuards(RolesGuard)
   @Delete('role')
   async removeRole(@Body() dto: UserRemoveRoleDto): Promise<User> {
     return await this.userService.removeRole(dto);
@@ -71,12 +93,15 @@ export class UserController {
     status: HttpStatus.NOT_FOUND,
     description: 'Пользователь не найден',
   })
+  @ApiBearerAuth()
+  @UseGuards(JwtAuthGuard)
   @Get('/:id')
-  async getOne(@Param('id') id: number): Promise<User> {
+  async getOne(@Param('id') id: number, @Req() req: any): Promise<User> {
     if (!Number(id)) {
       throw new BadRequestException('Ошибка ввода');
     }
-    return this.userService.getOne(id);
+    const user: User = req.user;
+    return this.userService.getOneWithCasl(id, user);
   }
   @ApiOperation({ summary: 'Обновить пользователя по id' })
   @ApiParam({
@@ -94,17 +119,24 @@ export class UserController {
     status: HttpStatus.NOT_FOUND,
     description: 'Пользователь не найден',
   })
+  @ApiBearerAuth()
+  @UseGuards(JwtAuthGuard)
   @Put('/:id')
   async update(
     @Param('id') id: number,
     @Body() dto: UpdateUserDto,
+    @Req() req: any,
   ): Promise<User> {
     if (!Number(id)) {
       throw new BadRequestException('Ошибка ввода');
     }
-    return this.userService.update(id, dto);
+    const user: User = req.user;
+    return this.userService.update(id, dto, user);
   }
-  @ApiOperation({ summary: 'Удалить пользователя по id' })
+  @ApiOperation({
+    summary: 'Удалить пользователя по id',
+    description: 'Требуется роль ADMIN',
+  })
   @ApiParam({
     name: 'id',
     type: Number,
@@ -116,6 +148,9 @@ export class UserController {
     status: HttpStatus.NOT_FOUND,
     description: 'Пользователь не найден',
   })
+  @ApiBearerAuth()
+  @Roles(ROLES.ADMIN)
+  @UseGuards(RolesGuard)
   @Delete('/:id')
   async delete(@Param('id') id: number): Promise<User> {
     if (!Number(id)) {

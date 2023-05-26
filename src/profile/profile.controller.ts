@@ -1,4 +1,5 @@
-import { Profile, UpdateProfileDto } from '@app/database';
+import { JwtAuthGuard } from '@app/common';
+import { Profile, UpdateProfileDto, User } from '@app/database';
 import {
   BadRequestException,
   Body,
@@ -7,8 +8,12 @@ import {
   HttpStatus,
   Param,
   Put,
+  Req,
+  UnauthorizedException,
+  UseGuards,
 } from '@nestjs/common';
 import {
+  ApiBearerAuth,
   ApiBody,
   ApiOperation,
   ApiParam,
@@ -33,6 +38,8 @@ export class ProfileController {
     status: HttpStatus.NOT_FOUND,
     description: 'Профиль не найден',
   })
+  @ApiBearerAuth()
+  @UseGuards(JwtAuthGuard)
   @Get('/:id')
   async getOne(@Param('id') id: number): Promise<Profile> {
     if (!Number(id)) {
@@ -56,14 +63,21 @@ export class ProfileController {
     status: HttpStatus.NOT_FOUND,
     description: 'Профиль не найден',
   })
+  @ApiBearerAuth()
+  @UseGuards(JwtAuthGuard)
   @Put('/:id')
   async update(
     @Param('id') id: number,
     @Body() dto: UpdateProfileDto,
+    @Req() req: any,
   ): Promise<Profile> {
     if (!Number(id)) {
       throw new BadRequestException('Ошибка ввода');
     }
-    return this.profileService.update(id, dto);
+    const user: User = req.user;
+    if (!req.user) {
+      throw new UnauthorizedException('Пользователь не авторизован');
+    }
+    return this.profileService.update(id, dto, user);
   }
 }
