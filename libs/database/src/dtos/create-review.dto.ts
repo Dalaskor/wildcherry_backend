@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsNumber, IsString, Max, Min } from 'class-validator';
+import { IsInt, IsNumber, IsString, Max, Min } from 'class-validator';
 
 export class CreateRewviewDto {
   @ApiProperty({
@@ -24,4 +24,16 @@ export class CreateRewviewDto {
   @Max(5)
   @IsNumber({}, { message: 'поле "score" должно быть числом' })
   score: number;
+  @ApiProperty({
+      example: 1,
+      description: 'ID товара, на который написан отзыв'
+  })
+  @IsInt({ message: 'поле "product" должно быть целым числом' })
+  product: number;
+  @ApiProperty({
+      example: 1,
+      description: 'ID пользователя, который оставил отзыв'
+  })
+  @IsInt({ message: 'поле "user" должно быть целым числом' })
+  user: number;
 }

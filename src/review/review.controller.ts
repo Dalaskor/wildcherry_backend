@@ -1,6 +1,7 @@
-import { CreateRewviewDto, Review, UpdateReviewDto } from '@app/database';
+import { JwtAuthGuard } from '@app/common';
+import { CreateRewviewDto, Review, UpdateReviewDto, User } from '@app/database';
 import {
-    BadRequestException,
+  BadRequestException,
   Body,
   Controller,
   Delete,
@@ -9,8 +10,11 @@ import {
   Param,
   Post,
   Put,
+  Req,
+  UseGuards,
 } from '@nestjs/common';
 import {
+  ApiBearerAuth,
   ApiBody,
   ApiOperation,
   ApiParam,
@@ -33,6 +37,8 @@ export class ReviewController {
     status: HttpStatus.BAD_REQUEST,
     description: 'Ошибка при создании отзыва на товар',
   })
+  @ApiBearerAuth()
+  @UseGuards(JwtAuthGuard)
   @Post()
   async create(@Body() dto: CreateRewviewDto): Promise<Review> {
     return this.reviewService.create(dto);
@@ -78,15 +84,19 @@ export class ReviewController {
     status: HttpStatus.NOT_FOUND,
     description: 'отзыв на товар не найден',
   })
+  @ApiBearerAuth()
+  @UseGuards(JwtAuthGuard)
   @Put('/:id')
   async update(
     @Param('id') id: number,
     @Body() dto: UpdateReviewDto,
+    @Req() req: any,
   ): Promise<Review> {
     if (!Number(id)) {
       throw new BadRequestException('Ошибка ввода');
     }
-    return this.reviewService.update(id, dto);
+    const user: User = req.user;
+    return this.reviewService.update(id, dto, user);
   }
   @ApiOperation({ summary: 'Удалить отзыв на товар по id' })
   @ApiParam({
@@ -100,11 +110,14 @@ export class ReviewController {
     status: HttpStatus.NOT_FOUND,
     description: 'Отзыв на товар не найден',
   })
+  @ApiBearerAuth()
+  @UseGuards(JwtAuthGuard)
   @Delete('/:id')
-  async delete(@Param('id') id: number): Promise<Review> {
+  async delete(@Param('id') id: number, @Req() req: any): Promise<Review> {
     if (!Number(id)) {
       throw new BadRequestException('Ошибка ввода');
     }
-    return this.reviewService.delete(id);
+    const user: User = req.user;
+    return this.reviewService.delete(id, user);
   }
 }

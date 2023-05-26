@@ -48,7 +48,7 @@ export class Review extends Model<Review, ReviewCreationAttrs> {
     type: User,
     description: 'Пользователь, который оставил отзыв',
   })
-  @BelongsTo(() => Product, 'fk_reviewuser')
+  @BelongsTo(() => User, 'fk_reviewuser')
   user: User;
   @Column({ type: DataType.INTEGER, allowNull: true })
   fk_reviewuser: number;
