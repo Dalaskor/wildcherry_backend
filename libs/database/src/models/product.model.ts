@@ -97,10 +97,6 @@ export class Product extends Model<Product, ProductCreationAttrs> {
   })
   count_score: number;
   @ApiProperty({
-    type: SubCategory,
-    description: 'Подкатегория товара',
-  })
-  @ApiProperty({
     type: Specification,
     description: 'Характеристики товара',
   })

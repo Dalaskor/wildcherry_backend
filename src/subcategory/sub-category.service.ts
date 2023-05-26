@@ -1,5 +1,7 @@
 import {
+  Category,
   CreateSubCategoryDto,
+  RegisterSubCategoryDto,
   SubCategory,
   UpdateCategoryDto,
 } from '@app/database';
@@ -9,11 +11,13 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
+import { CategoryService } from 'src/category/category.service';
 
 @Injectable()
 export class SubCategoryService {
   constructor(
     @InjectModel(SubCategory) private subCategoryRepository: typeof SubCategory,
+    private categoryService: CategoryService,
   ) {}
   /**
    * Создать подкатегорию товаров
@@ -39,6 +43,26 @@ export class SubCategoryService {
       throw new BadRequestException('Ошибка создания подкатегории товаров');
     }
     console.log('sub-catogry was created');
+    return subCategory;
+  }
+  /**
+   * Зарегистрировать новую подкатегорию товаров
+   * @param {RegisterSubCategoryDto} dto - DTO для создания подкатегории товаров
+   * @returns {SubCategory} - созданная подкатегория товаров
+   * @throws BadRequestException - ошибка создания подкатегории товаров
+   */
+  async registerNew(dto: RegisterSubCategoryDto): Promise<SubCategory> {
+    const category: Category = await this.categoryService.getOne(dto.category);
+    const subCategory: SubCategory = await this.create({ ...dto });
+    if (!category.sub_categories) {
+      category.$set('sub_categories', []);
+      category.sub_categories = [];
+    }
+    category.$add('sub_categories', subCategory.id);
+    category.sub_categories.push(subCategory);
+    subCategory.category = category;
+    await category.save();
+    await subCategory.save();
     return subCategory;
   }
   /**

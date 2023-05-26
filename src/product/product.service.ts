@@ -1,15 +1,32 @@
-import { CreateProductDto, Product, UpdateProductDto } from '@app/database';
+import {
+  CreateProductDto,
+  Product,
+  RegisterProductDto,
+  Specification,
+  SubCategory,
+  UpdateProductDto,
+  User,
+} from '@app/database';
+import { ProductImages } from '@app/database/models/product-images.model';
 import {
   BadRequestException,
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
+import { ProductImagesService } from 'src/product_images/product-images.service';
+import { SpecificationService } from 'src/specification/specification.service';
+import { SubCategoryService } from 'src/subcategory/sub-category.service';
+import { UserService } from 'src/user/user.service';
 
 @Injectable()
 export class ProductService {
   constructor(
     @InjectModel(Product) private productRepository: typeof Product,
+    private userService: UserService,
+    private subCategoryService: SubCategoryService,
+    private specificationService: SpecificationService,
+    private productImgService: ProductImagesService,
   ) {}
   /**
    * Создать товар
@@ -44,7 +61,10 @@ export class ProductService {
    */
   async getOne(id: number): Promise<Product> {
     console.log('Finding product...');
-    const product: Product = await this.productRepository.findByPk(id);
+    const product: Product = await this.productRepository.findOne({
+      where: { id },
+      include: { all: true },
+    });
     if (!product) {
       console.error('Товар не найден');
       throw new NotFoundException('Товар не найден');
@@ -85,6 +105,51 @@ export class ProductService {
     console.log('Removing product...');
     await product.destroy();
     console.log('Product was destroy');
+    return product;
+  }
+  /**
+   * Регистрация нового товара в системе
+   * @param {RegisterProductDto} dto - DTO для регистрации нового товара
+   */
+  async registerNew(dto: RegisterProductDto): Promise<Product> {
+    const user: User = await this.userService.getOne(dto.owner);
+    const subCategory: SubCategory = await this.subCategoryService.getOne(
+      dto.sub_category,
+    );
+    const product: Product = await this.create({ ...dto });
+    const specification: Specification = await this.specificationService.create(
+      { ...dto },
+    );
+    const imgs: ProductImages[] = [];
+    const imgsId: number[] = [];
+    for (const item of dto.images) {
+      const img: ProductImages = await this.productImgService.create({
+        url: item,
+      });
+      imgs.push(img);
+      imgsId.push(img.id);
+    }
+    product.$set('specification', specification);
+    product.specification = specification;
+    product.$set('images', imgsId);
+    product.images = imgs;
+    product.sub_category = subCategory;
+    product.owner = user;
+    if (!subCategory.products) {
+      subCategory.$set('products', []);
+      subCategory.products = [];
+    }
+    if (!user.products) {
+      user.$set('products', []);
+      user.products = [];
+    }
+    subCategory.$add('products', product.id);
+    subCategory.products.push(product);
+    user.$add('products', product.id);
+    user.products.push(product);
+    await subCategory.save();
+    await product.save();
+    await user.save();
     return product;
   }
 }

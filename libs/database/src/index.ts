@@ -40,3 +40,5 @@ export * from './dtos/update-discount.dto';
 export * from './dtos/registration.dto';
 export * from './dtos/user-add-role.dto';
 export * from './dtos/user-remove-role.dto';
+export * from './dtos/register-product.dto';
+export * from './dtos/register-sub-category.dto';

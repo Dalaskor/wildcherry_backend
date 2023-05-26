@@ -1,6 +1,7 @@
-import { CreateProductDto, Product, UpdateProductDto } from '@app/database';
+import { Roles, ROLES, RolesGuard } from '@app/common';
+import { Product, RegisterProductDto, UpdateProductDto } from '@app/database';
 import {
-    BadRequestException,
+  BadRequestException,
   Body,
   Controller,
   Delete,
@@ -9,8 +10,10 @@ import {
   Param,
   Post,
   Put,
+  UseGuards,
 } from '@nestjs/common';
 import {
+  ApiBearerAuth,
   ApiBody,
   ApiOperation,
   ApiParam,
@@ -23,9 +26,12 @@ import { ProductService } from './product.service';
 @Controller('product')
 export class ProductController {
   constructor(private productService: ProductService) {}
-  @ApiOperation({ summary: 'Создание нового товара' })
+  @ApiOperation({
+    summary: 'Создание нового товара',
+    description: 'Требуется роль SELLER или ADMIN',
+  })
   @ApiBody({
-    type: CreateProductDto,
+    type: RegisterProductDto,
     description: 'DTO для создания товара',
   })
   @ApiResponse({ status: HttpStatus.CREATED, type: Product })
@@ -33,9 +39,12 @@ export class ProductController {
     status: HttpStatus.BAD_REQUEST,
     description: 'Ошибка при создании товара',
   })
+  @ApiBearerAuth()
+  @Roles(ROLES.ADMIN, ROLES.SELLER)
+  @UseGuards(RolesGuard)
   @Post()
-  async create(@Body() dto: CreateProductDto): Promise<Product> {
-    return this.productService.create(dto);
+  async create(@Body() dto: RegisterProductDto): Promise<Product> {
+    return this.productService.registerNew(dto);
   }
   @ApiOperation({ summary: 'Получить все товары' })
   @ApiResponse({ status: HttpStatus.OK, type: Product, isArray: true })

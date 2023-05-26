@@ -1,6 +1,6 @@
 import { ROLES, Roles, RolesGuard } from '@app/common';
 import {
-  CreateSubCategoryDto,
+  RegisterSubCategoryDto,
   SubCategory,
   UpdateSubCategoryDto,
 } from '@app/database';
@@ -35,7 +35,7 @@ export class SubCategoryController {
     description: 'Треубется роль ADMIN',
   })
   @ApiBody({
-    type: CreateSubCategoryDto,
+    type: RegisterSubCategoryDto,
     description: 'DTO для создания подкатегории товаров',
   })
   @ApiResponse({ status: HttpStatus.CREATED, type: SubCategory })
@@ -47,8 +47,8 @@ export class SubCategoryController {
   @Roles(ROLES.ADMIN)
   @UseGuards(RolesGuard)
   @Post()
-  async create(@Body() dto: CreateSubCategoryDto): Promise<SubCategory> {
-    return this.subCategoryService.create(dto);
+  async create(@Body() dto: RegisterSubCategoryDto): Promise<SubCategory> {
+    return this.subCategoryService.registerNew(dto);
   }
   @ApiOperation({ summary: 'Получить все подкатегории товаров' })
   @ApiResponse({ status: HttpStatus.OK, type: SubCategory, isArray: true })
