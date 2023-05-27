@@ -45,6 +45,9 @@ export class AuthService {
    */
   async login(dto: CreateUserDto): Promise<JwtOutput> {
     const user: User = await this.validateUser(dto);
+    const tokens: JwtOutput = await this.generateTokens(user);
+    const hashRefresh = await bcrypt.hash(tokens.refreshToken, 5);
+    await this.userService.updateRefreshToken(user.id, hashRefresh);
     return this.generateTokens(user);
   }
   /**
@@ -208,9 +211,11 @@ export class AuthService {
     console.log('Updating JWT tokens...');
     const user: User = await this.userService.getOne(user_id);
     const userRefreshToken: string = user.refreshToken;
+    console.log('Checking user and token...');
     if (!user || !userRefreshToken) {
       throw new ForbiddenException('Доступ запрещен');
     }
+    console.log('Compare tokens...');
     const refreshTokenEquals = await bcrypt.compare(
       refreshToken,
       userRefreshToken,
@@ -220,6 +225,7 @@ export class AuthService {
     }
     const tokens: JwtOutput = await this.generateTokens(user);
     const hashRefreshToken: string = await bcrypt.hash(tokens.refreshToken, 5);
+    console.log('Saving token...');
     await this.userService.updateRefreshToken(user.id, hashRefreshToken);
     return tokens;
   }

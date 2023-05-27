@@ -114,7 +114,7 @@ export class AuthController {
     description: 'ID пользователя',
     example: 1,
   })
-  @ApiHeader({ name: 'refreshToken', example: 'asdfkljLKjasdf' })
+  @ApiHeader({ name: 'refreshtoken', example: 'asdfkljLKjasdf' })
   @ApiResponse({
     type: JwtOutput,
     status: HttpStatus.OK,
@@ -125,8 +125,8 @@ export class AuthController {
     @Param('id') id: number,
     @Req() req: any,
   ): Promise<JwtOutput> {
-    const token: string = req.refreshToken;
-    if (!Number(id) || token) {
+    const token: string = req.headers.refreshtoken;
+    if (!Number(id) || !token) {
       throw new BadRequestException('Ошибка ввода');
     }
     return this.authService.updateTokens(id, token);
