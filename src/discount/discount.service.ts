@@ -46,25 +46,15 @@ export class DiscountService {
       console.error('Ошибка создания акции');
       throw new BadRequestException('Ошибка создания акции');
     }
+    const productsIds: number[] = [];
+    for (const item of products) {
+      productsIds.push(item.id);
+    }
+    await discount.$set('products', productsIds);
     discount.products = products;
+    await discount.$set('owner', user);
     discount.owner = user;
     await discount.save();
-    if (!user.discounts) {
-      await user.$set('discounts', []);
-      user.discounts = [];
-    }
-    await user.$add('discounts', discount.id);
-    user.discounts.push(discount);
-    await user.save();
-    for await (const product of products) {
-      if (!product.discounts) {
-        await product.$set('discounts', []);
-        product.discounts = [];
-      }
-      await product.$add('discounts', discount.id);
-      product.discounts.push(discount);
-      await product.save();
-    }
     console.log('Discount was created');
     return discount;
   }
@@ -124,17 +114,13 @@ export class DiscountService {
       ? dto.description
       : discount.description;
     discount.value = dto.value ? dto.value : discount.value;
+    const productsIds: number[] = [];
+    for (const item of products) {
+      productsIds.push(item.id);
+    }
+    await discount.$set('products', productsIds);
     discount.products = products;
     await discount.save();
-    for await (const product of products) {
-      if (!product.discounts) {
-        await product.$set('discounts', []);
-        product.discounts = [];
-      }
-      await product.$add('discounts', discount.id);
-      product.discounts.push(discount);
-      await product.save();
-    }
     console.log('Discount was changed');
     const updatedDiscount: Discount = await this.discountRepository.findByPk(
       discount.id,

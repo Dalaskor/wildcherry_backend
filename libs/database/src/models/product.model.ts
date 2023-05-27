@@ -72,7 +72,7 @@ export class Product extends Model<Product, ProductCreationAttrs> {
     default: 0,
   })
   @Column({
-    type: DataType.INTEGER,
+    type: DataType.DOUBLE,
     defaultValue: 0,
   })
   total_price: number;

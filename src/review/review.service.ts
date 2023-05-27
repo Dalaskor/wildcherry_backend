@@ -39,19 +39,10 @@ export class ReviewService {
       console.error('Ошибка создания отзыва на товар');
       throw new BadRequestException('Ошибка создания отзыва на товар');
     }
-    if (!user.reviews) {
-      await user.$set('reviews', []);
-      user.reviews = [];
-    }
-    await user.$add('reviews', review.id);
-    user.reviews.push(review);
+    review.$set('user', user.id);
     review.user = user;
-    if (!product.reviews) {
-      await product.$set('reviews', []);
-      product.reviews = [];
-    }
-    await product.$add('reviews', review.id);
-    product.reviews.push(review);
+    review.$set('product', product.id);
+    review.product = product;
     await user.save();
     await product.save();
     await review.save();
@@ -93,7 +84,11 @@ export class ReviewService {
    * @param {UpdateReviewDto} dto - DTO для обновления данных отзыва
    * @returns {Review} - Обновленный отзыв
    */
-  async update(id: number, dto: UpdateReviewDto, req_user: User): Promise<Review> {
+  async update(
+    id: number,
+    dto: UpdateReviewDto,
+    req_user: User,
+  ): Promise<Review> {
     const review: Review = await this.getOne(id);
     this.abilityService.checkAbility(req_user, review, ACTIONS.UPDATE);
     console.log('Review changing...');

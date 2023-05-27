@@ -1,8 +1,10 @@
 import { ACTIONS } from '@app/common';
 import {
   CreateProductDto,
+  Discount,
   Product,
   RegisterProductDto,
+  Review,
   Specification,
   SubCategory,
   UpdateProductDto,
@@ -15,6 +17,7 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
+import { Sequelize } from 'sequelize';
 import { AbilityService } from 'src/ability/ability.service';
 import { ProductImagesService } from 'src/product_images/product-images.service';
 import { SpecificationService } from 'src/specification/specification.service';
@@ -53,7 +56,42 @@ export class ProductService {
    */
   async getAll(): Promise<Product[]> {
     console.log('Find all products...');
-    const products: Product[] = await this.productRepository.findAll();
+    const products: Product[] = await this.productRepository.findAll({
+      include: [
+        {
+          model: Review,
+          as: 'reviews',
+          attributes: [],
+        },
+        {
+          model: Discount,
+          as: 'discounts',
+        },
+      ],
+      attributes: {
+        include: [
+          [Sequelize.fn('COUNT', Sequelize.col('reviews.id')), 'count_score'],
+          [Sequelize.fn('AVG', Sequelize.col('reviews.score')), 'score'],
+        ],
+      },
+      group: [
+        'Product.id',
+        'discounts.id',
+        'discounts->DiscountProducts.id',
+      ],
+    });
+    for await (const product of products) {
+      let discount: number = 0;
+      for (const item of product.discounts) {
+        discount += item.value / 100;
+        if (discount > 1) {
+          discount = 1;
+          break;
+        }
+      }
+      product.total_price = product.price - product.price * discount;
+      await product.save();
+    }
     console.log('Found result');
     return products;
   }
@@ -64,14 +102,50 @@ export class ProductService {
    */
   async getOne(id: number): Promise<Product> {
     console.log('Finding product...');
-    const product: Product = await this.productRepository.findOne({
+    const product: Product = await this.productRepository.findOne<Product>({
       where: { id },
-      include: { all: true },
+      include: [
+        {
+          model: Review,
+          as: 'reviews',
+          attributes: [],
+        },
+        {
+          model: Discount,
+          as: 'discounts',
+        },
+        {
+          model: Specification,
+          as: 'specification',
+        },
+      ],
+      attributes: {
+        include: [
+          [Sequelize.fn('COUNT', Sequelize.col('reviews.id')), 'count_score'],
+          [Sequelize.fn('AVG', Sequelize.col('reviews.score')), 'score'],
+        ],
+      },
+      group: [
+        'Product.id',
+        'discounts.id',
+        'discounts->DiscountProducts.id',
+        'specification.id',
+      ],
     });
     if (!product) {
       console.error('Товар не найден');
       throw new NotFoundException('Товар не найден');
     }
+    let discount: number = 0;
+    for (const item of product.discounts) {
+      discount += item.value / 100;
+      if (discount > 1) {
+        discount = 1;
+        break;
+      }
+    }
+    product.total_price = product.price - product.price * discount;
+    await product.save();
     console.log('Product was founded');
     return product;
   }

@@ -54,12 +54,7 @@ export class SubCategoryService {
   async registerNew(dto: RegisterSubCategoryDto): Promise<SubCategory> {
     const category: Category = await this.categoryService.getOne(dto.category);
     const subCategory: SubCategory = await this.create({ ...dto });
-    if (!category.sub_categories) {
-      category.$set('sub_categories', []);
-      category.sub_categories = [];
-    }
-    category.$add('sub_categories', subCategory.id);
-    category.sub_categories.push(subCategory);
+    subCategory.$set('category', subCategory.id);
     subCategory.category = category;
     await category.save();
     await subCategory.save();
