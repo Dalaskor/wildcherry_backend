@@ -39,7 +39,9 @@ export class CategoryService {
    */
   async getAll(): Promise<Category[]> {
     console.log('Found all categories...');
-    const categories: Category[] = await this.categoryRepository.findAll();
+    const categories: Category[] = await this.categoryRepository.findAll({
+      include: { all: true },
+    });
     console.log('Found result');
     return categories;
   }
