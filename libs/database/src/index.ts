@@ -42,3 +42,5 @@ export * from './dtos/user-add-role.dto';
 export * from './dtos/user-remove-role.dto';
 export * from './dtos/register-product.dto';
 export * from './dtos/register-sub-category.dto';
+export * from './dtos/pag-options.dto';
+export * from './dtos/pag-product.dto';

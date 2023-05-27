@@ -2,6 +2,8 @@
 export * from './consts/jwt-payload';
 export * from './consts/roles.enum';
 export * from './consts/action.enum';
+export * from './consts/order.enum';
+export * from './consts/product-orderby.enum';
 // Decorators
 export * from './decorators/roles-auth.decorator';
 // Guards

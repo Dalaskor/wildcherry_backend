@@ -1,7 +1,8 @@
-import { ACTIONS } from '@app/common';
+import { ACTIONS, ORDER, PRODUCT_ORDER_BY } from '@app/common';
 import {
   CreateProductDto,
   Discount,
+  PagProductDto,
   Product,
   RegisterProductDto,
   Review,
@@ -17,7 +18,7 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
-import { Sequelize } from 'sequelize';
+import { Op, Sequelize } from 'sequelize';
 import { AbilityService } from 'src/ability/ability.service';
 import { ProductImagesService } from 'src/product_images/product-images.service';
 import { SpecificationService } from 'src/specification/specification.service';
@@ -54,9 +55,28 @@ export class ProductService {
    * Получить все товары
    * @returns {Product[]} - массив товаров
    */
-  async getAll(): Promise<Product[]> {
+  async getAll(dto: PagProductDto): Promise<Product[]> {
+    const page: number = dto.page ? dto.page : 1;
+    const take: number = dto.take ? dto.take : 10;
+    const skip = (page - 1) * take;
+    const order: string = dto.order ? dto.order : ORDER.ASC;
+    const orderBy: string = dto.orderBy ? dto.orderBy : PRODUCT_ORDER_BY.SCORE;
+    const priceStart: number = await this.productRepository.min('price');
+    const priceEnd: number = await this.productRepository.max('price');
+    const priceStartFilter: number = dto.priceStart ? dto.priceStart : 0;
+    const priceEndFilter: number = dto.priceEnd ? dto.priceEnd : priceEnd;
+    const scoreStartFilter: number = dto.scoreStart ? dto.scoreStart : 0;
+    const scoreEndFilter: number = dto.scoreEnd ? dto.scoreEnd : 5;
     console.log('Find all products...');
+    console.log('PAGE: ', page);
+    console.log('TAKE: ', take);
+    console.log('SKIP: ', skip);
+    console.log('ORDER: ', order);
+    console.log('ORDER BY: ', orderBy);
+    console.log('price: ', priceStartFilter, ' ', priceEndFilter);
+    console.log('score: ', scoreStartFilter, ' ', scoreEndFilter);
     const products: Product[] = await this.productRepository.findAll({
+      subQuery: false,
       include: [
         {
           model: Review,
@@ -66,6 +86,7 @@ export class ProductService {
         {
           model: Discount,
           as: 'discounts',
+          attributes: ['value'],
         },
       ],
       attributes: {
@@ -74,10 +95,23 @@ export class ProductService {
           [Sequelize.fn('AVG', Sequelize.col('reviews.score')), 'score'],
         ],
       },
+      order: [
+        [Sequelize.col(orderBy), order],
+        [PRODUCT_ORDER_BY.NAME, ORDER.ASC],
+      ],
+      where: {
+        price: {
+          [Op.gte]: priceStartFilter,
+          [Op.lte]: priceEndFilter,
+        },
+      },
+      offset: skip,
+      limit: take,
       group: [
         'Product.id',
         'discounts.id',
         'discounts->DiscountProducts.id',
+        'Product.name',
       ],
     });
     for await (const product of products) {
@@ -92,6 +126,16 @@ export class ProductService {
       product.total_price = product.price - product.price * discount;
       await product.save();
     }
+    const product_count = await this.productRepository.count({
+      where: {
+        price: {
+          [Op.gte]: priceStartFilter,
+          [Op.lte]: priceEndFilter,
+        },
+      },
+      distinct: true,
+      col: 'id',
+    });
     console.log('Found result');
     return products;
   }

@@ -76,7 +76,7 @@ export class Product extends Model<Product, ProductCreationAttrs> {
     defaultValue: 0,
   })
   total_price: number;
-  @ApiProperty({
+  /* @ApiProperty({
     example: 4.5,
     description: 'Рейтинг товара',
     default: 0,
@@ -95,7 +95,7 @@ export class Product extends Model<Product, ProductCreationAttrs> {
     type: DataType.INTEGER,
     defaultValue: 0,
   })
-  count_score: number;
+  count_score: number; */
   @ApiProperty({
     type: Specification,
     description: 'Характеристики товара',
