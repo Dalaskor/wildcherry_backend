@@ -1,4 +1,4 @@
-import { JwtAuthGuard, JwtOutput, ROLES, Roles } from '@app/common';
+import { JwtAuthGuard, JwtOutput } from '@app/common';
 import { CreateUserDto, RegistrationDto, User } from '@app/database';
 import {
   BadRequestException,
