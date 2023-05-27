@@ -44,3 +44,5 @@ export * from './dtos/register-product.dto';
 export * from './dtos/register-sub-category.dto';
 export * from './dtos/pag-options.dto';
 export * from './dtos/pag-product.dto';
+export * from './dtos/pag-reviews.dto';
+export * from './dtos/pag-discounts.dto';

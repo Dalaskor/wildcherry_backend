@@ -1,5 +1,11 @@
 import { JwtAuthGuard } from '@app/common';
-import { CreateRewviewDto, Review, UpdateReviewDto, User } from '@app/database';
+import {
+  CreateRewviewDto,
+  PagReviewsDto,
+  Review,
+  UpdateReviewDto,
+  User,
+} from '@app/database';
 import {
   BadRequestException,
   Body,
@@ -10,12 +16,15 @@ import {
   Param,
   Post,
   Put,
+  Query,
   Req,
+  Res,
   UseGuards,
 } from '@nestjs/common';
 import {
   ApiBearerAuth,
   ApiBody,
+  ApiHeader,
   ApiOperation,
   ApiParam,
   ApiResponse,
@@ -46,8 +55,10 @@ export class ReviewController {
   @ApiOperation({ summary: 'Получить все отзывы на товары' })
   @ApiResponse({ status: HttpStatus.OK, type: Review, isArray: true })
   @Get()
-  async getAll(): Promise<Review[]> {
-    return this.reviewService.getAll();
+  async getAll(@Query() dto: PagReviewsDto, @Res() res: any): Promise<any> {
+    const output = await this.reviewService.getAll(dto);
+    await res.header('x-total-count', output.count);
+    await res.send(output.reviews);
   }
   @ApiOperation({ summary: 'Получить один отзыв по id' })
   @ApiParam({

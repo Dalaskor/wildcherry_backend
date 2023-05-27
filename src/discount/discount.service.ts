@@ -1,7 +1,8 @@
-import { ACTIONS } from '@app/common';
+import { ACTIONS, DiscountsOutput } from '@app/common';
 import {
   CreateDiscountDto,
   Discount,
+  PagDiscountDto,
   Product,
   UpdateDiscountDto,
   User,
@@ -62,11 +63,46 @@ export class DiscountService {
    * Получить все акции
    * @returns {Discount[]} - массив акций
    */
-  async getAll(): Promise<Discount[]> {
+  async getAll(dto: PagDiscountDto): Promise<DiscountsOutput> {
+    const page: number = dto.page ? dto.page : 1;
+    const take: number = dto.take ? dto.take : 10;
+    const skip = (page - 1) * take;
+    const user: number | null = dto.user ? dto.user : null;
+    const product: number | null = dto.product ? dto.product : null;
+    let include: any[] = [];
+    if (product) {
+      include.push({
+        model: Product,
+        as: 'products',
+        where: {
+          id: product,
+        },
+      });
+    }
+    if (user) {
+      include.push({
+        model: User,
+        as: 'owner',
+        where: {
+          id: user,
+        },
+      });
+    }
     console.log('Found all discounts...');
-    const discounts: Discount[] = await this.discountRepository.findAll();
+    const discounts: Discount[] = await this.discountRepository.findAll({
+      include,
+      offset: skip,
+      limit: take,
+    });
     console.log('Found result');
-    return discounts;
+    const discount_count = await this.discountRepository.count({
+      include,
+    });
+    const output: DiscountsOutput = {
+      discounts,
+      count: discount_count,
+    };
+    return output;
   }
   /**
    * Получить одну акцию

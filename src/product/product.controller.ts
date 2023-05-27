@@ -1,4 +1,10 @@
-import { JwtAuthGuard, Roles, ROLES, RolesGuard } from '@app/common';
+import {
+  JwtAuthGuard,
+  ProductsOutput,
+  Roles,
+  ROLES,
+  RolesGuard,
+} from '@app/common';
 import {
   PagProductDto,
   Product,
@@ -18,11 +24,13 @@ import {
   Put,
   Query,
   Req,
+  Res,
   UseGuards,
 } from '@nestjs/common';
 import {
   ApiBearerAuth,
   ApiBody,
+  ApiHeader,
   ApiOperation,
   ApiParam,
   ApiResponse,
@@ -55,10 +63,17 @@ export class ProductController {
     return this.productService.registerNew(dto);
   }
   @ApiOperation({ summary: 'Получить все товары' })
-  @ApiResponse({ status: HttpStatus.OK, type: Product, isArray: true })
+  @ApiResponse({
+    status: HttpStatus.OK,
+    type: Product,
+    isArray: true,
+  })
   @Get()
-  async getAll(@Query() dto: PagProductDto): Promise<Product[]> {
-    return this.productService.getAll(dto);
+  async getAll(@Query() dto: PagProductDto, @Res() res: any): Promise<any> {
+    const products: ProductsOutput = await this.productService.getAll(dto);
+    await res.header('x-total-count', products.count);
+    await res.header('x-price-max', products.priceMax);
+    await res.send(products.products);
   }
   @ApiOperation({ summary: 'Получить один товар по id' })
   @ApiParam({

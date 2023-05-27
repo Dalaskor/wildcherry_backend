@@ -1,6 +1,7 @@
-import { ACTIONS } from '@app/common';
+import { ACTIONS, ReviewsOutput } from '@app/common';
 import {
   CreateRewviewDto,
+  PagReviewsDto,
   Product,
   Review,
   UpdateReviewDto,
@@ -53,11 +54,46 @@ export class ReviewService {
    * Получить все отзывы на товары
    * @returns {Review[]} - массив отзывов на товары
    */
-  async getAll(): Promise<Review[]> {
+  async getAll(dto: PagReviewsDto): Promise<ReviewsOutput> {
+    const page: number = dto.page ? dto.page : 1;
+    const take: number = dto.take ? dto.take : 10;
+    const skip = (page - 1) * take;
+    const user: number | null = dto.user ? dto.user : null;
+    const product: number | null = dto.product ? dto.product : null;
+    let include: any[] = [];
+    if (product) {
+      include.push({
+        model: Product,
+        as: 'product',
+        where: {
+          id: product,
+        },
+      });
+    }
+    if (user) {
+      include.push({
+        model: User,
+        as: 'user',
+        where: {
+          id: user,
+        },
+      });
+    }
     console.log('Found all review...');
-    const reviews: Review[] = await this.reviewRepository.findAll();
+    const reviews: Review[] = await this.reviewRepository.findAll({
+      include,
+      offset: skip,
+      limit: take,
+    });
+    const reviews_count = await this.reviewRepository.count({
+      include,
+    });
+    const output: ReviewsOutput = {
+      reviews,
+      count: reviews_count,
+    };
     console.log('Found result');
-    return reviews;
+    return output;
   }
   /**
    * Получить один отзыв на товар

@@ -1,4 +1,4 @@
-import { ACTIONS, ORDER, PRODUCT_ORDER_BY } from '@app/common';
+import { ACTIONS, ORDER, ProductsOutput, PRODUCT_ORDER_BY } from '@app/common';
 import {
   CreateProductDto,
   Discount,
@@ -55,7 +55,7 @@ export class ProductService {
    * Получить все товары
    * @returns {Product[]} - массив товаров
    */
-  async getAll(dto: PagProductDto): Promise<Product[]> {
+  async getAll(dto: PagProductDto): Promise<ProductsOutput> {
     const page: number = dto.page ? dto.page : 1;
     const take: number = dto.take ? dto.take : 10;
     const skip = (page - 1) * take;
@@ -126,7 +126,7 @@ export class ProductService {
       product.total_price = product.price - product.price * discount;
       await product.save();
     }
-    const product_count = await this.productRepository.count({
+    const product_count: number = await this.productRepository.count({
       where: {
         price: {
           [Op.gte]: priceStartFilter,
@@ -137,7 +137,12 @@ export class ProductService {
       col: 'id',
     });
     console.log('Found result');
-    return products;
+    const productsOutput: ProductsOutput = {
+      products,
+      count: product_count,
+      priceMax: priceEnd,
+    };
+    return productsOutput;
   }
   /**
    * Получить один товар

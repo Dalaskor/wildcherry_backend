@@ -1,7 +1,8 @@
-import { ROLES, Roles, RolesGuard } from '@app/common';
+import { DiscountsOutput, ROLES, Roles, RolesGuard } from '@app/common';
 import {
   CreateDiscountDto,
   Discount,
+  PagDiscountDto,
   UpdateDiscountDto,
   User,
 } from '@app/database';
@@ -15,12 +16,15 @@ import {
   Param,
   Post,
   Put,
+  Query,
   Req,
+  Res,
   UseGuards,
 } from '@nestjs/common';
 import {
   ApiBearerAuth,
   ApiBody,
+  ApiHeader,
   ApiOperation,
   ApiParam,
   ApiResponse,
@@ -55,8 +59,10 @@ export class DiscountController {
   @ApiOperation({ summary: 'Получить все акции на товары' })
   @ApiResponse({ status: HttpStatus.OK, type: Discount, isArray: true })
   @Get()
-  async getAll(): Promise<Discount[]> {
-    return this.discountService.getAll();
+  async getAll(@Query() dto: PagDiscountDto, @Res() res: any): Promise<any> {
+    const output: DiscountsOutput = await this.discountService.getAll(dto);
+    await res.header('x-total-count', output.count);
+    await res.send(output.discounts);
   }
   @ApiOperation({ summary: 'Получить одну акцию по id' })
   @ApiParam({

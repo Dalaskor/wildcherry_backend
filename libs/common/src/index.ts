@@ -13,3 +13,6 @@ export * from './guards/roles.guard';
 export * from './factories/ability-profile.factory';
 // Outputs
 export * from './outputs/jwt-output';
+export * from './outputs/products-output';
+export * from './outputs/reviews-output';
+export * from './outputs/discounts-output';
