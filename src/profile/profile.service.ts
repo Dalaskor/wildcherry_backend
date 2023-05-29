@@ -9,7 +9,6 @@ import {
   BadRequestException,
   Injectable,
   NotFoundException,
-  UnauthorizedException,
 } from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
 import { AbilityService } from 'src/ability/ability.service';
