@@ -1,4 +1,5 @@
 import {
+    Cart,
   Discount,
   Favorite,
   Product,
@@ -25,6 +26,7 @@ export type Subjects =
       | typeof Review
       | typeof Discount
       | typeof Favorite
+      | typeof Cart
     >
   | 'all';
 export type AppAbility = Ability<[ACTIONS, Subjects]>;
@@ -66,6 +68,11 @@ export class AbilityFactory {
       can(ACTIONS.UPDATE, Discount);
       can(ACTIONS.DELETE, Discount);
       can(ACTIONS.READ, Discount);
+      // Cart
+      can(ACTIONS.CREATE, Cart);
+      can(ACTIONS.UPDATE, Cart);
+      can(ACTIONS.DELETE, Cart);
+      can(ACTIONS.READ, Cart);
     } else if (this.checkSeller(user)) {
       // Product
       can(ACTIONS.CREATE, Product, { fk_productuser: user.id });
@@ -89,6 +96,9 @@ export class AbilityFactory {
     // Favorite
     can(ACTIONS.READ, Favorite, { fk_favoriteid: user.id });
     can(ACTIONS.UPDATE, Favorite, { fk_favoriteid: user.id });
+    // Favorite
+    can(ACTIONS.READ, Cart, { fk_cartid: user.id });
+    can(ACTIONS.UPDATE, Cart, { fk_cartid: user.id });
     // Review
     can(ACTIONS.UPDATE, Review, { fk_reviewuser: user.id });
     can(ACTIONS.DELETE, Review, { fk_reviewuser: user.id });
