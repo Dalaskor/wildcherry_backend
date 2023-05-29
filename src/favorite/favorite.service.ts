@@ -1,10 +1,15 @@
-import { Favorite } from '@app/database';
+import { ACTIONS } from '@app/common';
+import { Favorite, User } from '@app/database';
 import { BadRequestException, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
+import { AbilityService } from 'src/ability/ability.service';
+import { ProductService } from 'src/product/product.service';
 
 export class FavoriteService {
   constructor(
     @InjectModel(Favorite) private favoriteRepository: typeof Favorite,
+    private productService: ProductService,
+    private abilityService: AbilityService,
   ) {}
   /**
    * Создать раздел избранного
@@ -40,6 +45,11 @@ export class FavoriteService {
     console.log('Favorite was founded');
     return favorite;
   }
+  async getOneCasl(id: number, req_user: User): Promise<Favorite> {
+    const favorite = await this.getOne(id);
+    this.abilityService.checkAbility(req_user, favorite, ACTIONS.READ);
+    return favorite;
+  }
   /**
    * Удалить раздел избранного
    * @param {number} id - ID пользователя
@@ -50,6 +60,65 @@ export class FavoriteService {
     console.log('Removing favorite...');
     await favorite.destroy();
     console.log('Favorite was destroy');
+    return favorite;
+  }
+  /**
+   * Добавить товар в избранное
+   * @param {number} userId - ID пользователя
+   * @param {number} productId - ID товара
+   * @param {User} req_user - Пользователь сохраненый в req, во время JWT авторизации
+   */
+  async addProduct(
+    userId: number,
+    productId: number,
+    req_user: User,
+  ): Promise<Favorite> {
+    const favorite = await this.getOne(userId);
+    this.abilityService.checkAbility(req_user, favorite, ACTIONS.UPDATE);
+    const product = await this.productService.getOne(productId);
+    console.log('Add product to favorite...');
+    if (!favorite.products) {
+      await favorite.$set('products', []);
+      favorite.products = [];
+    }
+    await favorite.$add('products', product.id);
+    favorite.products.push(product);
+    await favorite.save();
+    console.log('Complete');
+    return favorite;
+  }
+  /**
+   * Удалить товар из изранного
+   * @param {number} userId - ID пользователя
+   * @param {number} productId - ID товара
+   * @param {User} req_user - Пользователь сохраненый в req, во время JWT авторизации
+   */
+  async removeProduct(
+    userId: number,
+    productId: number,
+    req_user: User,
+  ): Promise<Favorite> {
+    const favorite = await this.getOne(userId);
+    this.abilityService.checkAbility(req_user, favorite, ACTIONS.UPDATE);
+    const product = await this.productService.getOne(productId);
+    console.log('Remove product to favorite...');
+    await favorite.$remove('products', product.id);
+    console.log('Complete');
+    return favorite;
+  }
+  /**
+   * Очистить избранное
+   * @param {number} userId - ID пользователя
+   * @param {User} req_user - Пользователь сохраненый в req, во время JWT авторизации
+   */
+  async clear(userId: number, req_user: User) {
+    const favorite = await this.getOne(userId);
+    this.abilityService.checkAbility(req_user, favorite, ACTIONS.UPDATE);
+    console.log('Clear favorite...');
+    await favorite.$set('products', []);
+    favorite.products = [];
+    await favorite.save();
+    console.log('Complete');
     return favorite;
   }
 }

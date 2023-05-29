@@ -80,9 +80,14 @@ export class AuthService {
     const favorite: Favorite = await this.favoriteService.create();
     console.log('[REGISTRATION] - created favorite');
     await user.$set('profile', profile);
+    user.profile = profile;
     await user.$set('cart', cart);
+    user.cart = cart;
     await user.$set('delivery', delivery);
+    user.delivery = delivery;
     await user.$set('favorite', favorite);
+    user.favorite = favorite;
+    await user.save();
     console.log('[REGISTRATION] - END');
     return user;
   }
