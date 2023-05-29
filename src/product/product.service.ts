@@ -67,6 +67,19 @@ export class ProductService {
     const priceEndFilter: number = dto.priceEnd ? dto.priceEnd : priceEnd;
     const scoreStartFilter: number = dto.scoreStart ? dto.scoreStart : 0;
     const scoreEndFilter: number = dto.scoreEnd ? dto.scoreEnd : 5;
+    const search: string = dto.search ? `%${dto.search}%` : null;
+    let where: any = {
+      price: {
+        [Op.gte]: priceStartFilter,
+        [Op.lte]: priceEndFilter,
+      },
+    };
+    if (search) {
+      const finder = {
+        [Op.iLike]: search,
+      };
+      where.name = finder;
+    }
     console.log('Find all products...');
     console.log('PAGE: ', page);
     console.log('TAKE: ', take);
@@ -99,12 +112,7 @@ export class ProductService {
         [Sequelize.col(orderBy), order],
         [PRODUCT_ORDER_BY.NAME, ORDER.ASC],
       ],
-      where: {
-        price: {
-          [Op.gte]: priceStartFilter,
-          [Op.lte]: priceEndFilter,
-        },
-      },
+      where,
       offset: skip,
       limit: take,
       group: [

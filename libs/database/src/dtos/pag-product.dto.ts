@@ -1,7 +1,14 @@
 import { PRODUCT_ORDER_BY } from '@app/common';
 import { ApiPropertyOptional } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
-import { IsEnum, IsNumber, IsOptional, Max, Min } from 'class-validator';
+import {
+  IsEnum,
+  IsNumber,
+  IsOptional,
+  IsString,
+  Max,
+  Min,
+} from 'class-validator';
 import { PagOptionsDto } from './pag-options.dto';
 
 export class PagProductDto extends PagOptionsDto {
@@ -56,4 +63,11 @@ export class PagProductDto extends PagOptionsDto {
   @Max(5)
   @IsOptional()
   readonly scoreEnd?: number = 0;
+  @ApiPropertyOptional({
+    example: 'видеокарта',
+    description: 'Строка поиска',
+  })
+  @IsString({ message: 'поле "search" - должно быть строкой' })
+  @IsOptional()
+  readonly search?: string = '';
 }
