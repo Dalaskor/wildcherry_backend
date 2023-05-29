@@ -47,3 +47,4 @@ export * from './dtos/pag-product.dto';
 export * from './dtos/pag-reviews.dto';
 export * from './dtos/pag-discounts.dto';
 export * from './dtos/manage-cart.dto';
+export * from './dtos/manage-delivery.dto';

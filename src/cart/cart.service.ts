@@ -54,8 +54,8 @@ export class CartService {
     return cart;
   }
   async getOneCasl(id: number, req_user: User): Promise<Cart> {
-    const cart = await this.getOne(id);
-    this.abilityService.checkAbility(req_user, Cart, ACTIONS.READ);
+    const cart: Cart = await this.getOne(id);
+    this.abilityService.checkAbility(req_user, cart, ACTIONS.READ);
     return cart;
   }
   /**
@@ -78,7 +78,7 @@ export class CartService {
   async clear(userId: number, req_user: User) {
     const cart: Cart = await this.getOne(userId);
     this.abilityService.checkAbility(req_user, cart, ACTIONS.UPDATE);
-    console.log('Clear favorite...');
+    console.log('Clear cart...');
     await cart.$set('products', []);
     cart.products = [];
     cart.total_cost = 0;
@@ -134,7 +134,7 @@ export class CartService {
     return cart;
   }
   /**
-   * Добавить товар в корзину
+   * Удалить товар из корзины
    * @param {ManageCartDto} dto - DTO для работы с корзиной
    * @param {User} req_user - Пользователь сохраненый в req, во время JWT авторизации
    */
@@ -152,7 +152,7 @@ export class CartService {
     if (!cartRelation) {
       throw new NotFoundException('Данный товар не найден в корзине');
     }
-    console.log('Remove product to cart...');
+    console.log('Remove product from cart...');
     if (cartRelation.count > dto.count) {
       cartRelation.count -= dto.count;
       await cartRelation.save();
