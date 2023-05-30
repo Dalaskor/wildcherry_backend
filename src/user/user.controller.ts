@@ -1,5 +1,6 @@
 import { JwtAuthGuard, ROLES, Roles, RolesGuard } from '@app/common';
 import {
+    PagUsersDto,
   UpdateUserDto,
   User,
   UserAddRoleDto,
@@ -14,6 +15,7 @@ import {
   HttpStatus,
   Param,
   Put,
+  Query,
   Req,
   UseGuards,
 } from '@nestjs/common';
@@ -40,8 +42,8 @@ export class UserController {
   @Roles(ROLES.ADMIN)
   @UseGuards(RolesGuard)
   @Get()
-  async getAll(): Promise<User[]> {
-    return this.userService.getAll();
+  async getAll(@Query() dto: PagUsersDto): Promise<User[]> {
+    return this.userService.getAll(dto);
   }
   @ApiOperation({
     summary: 'Добавить роль пользователю',

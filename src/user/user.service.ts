@@ -1,6 +1,8 @@
-import { ACTIONS } from '@app/common';
+import { ACTIONS, ORDER } from '@app/common';
 import {
   CreateUserDto,
+  PagUsersDto,
+  Profile,
   Role,
   UpdateUserDto,
   User,
@@ -48,9 +50,33 @@ export class UserService {
    * Получить всех пользователей
    * @returns {User[]} - массив пользователей
    */
-  async getAll(): Promise<User[]> {
+  async getAll(dto: PagUsersDto): Promise<User[]> {
     console.log('Found all users...');
-    const users: User[] = await this.userRepository.findAll();
+    const page: number = dto.page ? dto.page : 1;
+    const take: number = dto.take ? dto.take : 10;
+    const skip = (page - 1) * take;
+    const order: string = dto.order ? dto.order : ORDER.ASC;
+    let roleWhere: any = {};
+    if (dto.role) {
+      roleWhere = {
+        value: dto.role,
+      };
+    }
+    const users: User[] = await this.userRepository.findAll({
+      include: [
+        {
+          model: Role,
+          where: roleWhere,
+        },
+        {
+          model: Profile,
+        },
+      ],
+      order: [['email', order]],
+      offset: skip,
+      limit: take,
+      group: ['User.id', 'User.email'],
+    });
     console.log('Found result');
     return users;
   }
