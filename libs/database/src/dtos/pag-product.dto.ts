@@ -70,4 +70,11 @@ export class PagProductDto extends PagOptionsDto {
   @IsString({ message: 'поле "search" - должно быть строкой' })
   @IsOptional()
   readonly search?: string = '';
+  @ApiPropertyOptional({
+    example: 'Видеокарты',
+    description: 'Название подкатегории (Строгий регитстр)',
+  })
+  @IsString({ message: 'поле "category" - должно быть строкой' })
+  @IsOptional()
+  readonly category?: string = '';
 }

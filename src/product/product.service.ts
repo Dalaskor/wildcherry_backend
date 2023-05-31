@@ -80,6 +80,12 @@ export class ProductService {
       };
       where.name = finder;
     }
+    let categoryWhere: any = {};
+    if (dto.category) {
+      categoryWhere = {
+        name: dto.category,
+      };
+    }
     console.log('Find all products...');
     console.log('PAGE: ', page);
     console.log('TAKE: ', take);
@@ -101,6 +107,14 @@ export class ProductService {
           as: 'discounts',
           attributes: ['value'],
         },
+        {
+          model: SubCategory,
+          as: 'sub_category',
+          attributes: ['id', 'name'],
+          required: true,
+          duplicating: false,
+          where: categoryWhere,
+        },
       ],
       attributes: {
         include: [
@@ -120,6 +134,7 @@ export class ProductService {
         'discounts.id',
         'discounts->DiscountProducts.id',
         'Product.name',
+        'sub_category.id',
       ],
     });
     for await (const product of products) {
