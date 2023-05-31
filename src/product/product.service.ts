@@ -115,6 +115,11 @@ export class ProductService {
           duplicating: false,
           where: categoryWhere,
         },
+        {
+          model: ProductImages,
+          as: 'images',
+          attributes: ['url'],
+        },
       ],
       attributes: {
         include: [
@@ -135,6 +140,7 @@ export class ProductService {
         'discounts->DiscountProducts.id',
         'Product.name',
         'sub_category.id',
+        'images.id',
       ],
     });
     for await (const product of products) {
