@@ -60,25 +60,21 @@ export class ReviewService {
     const skip = (page - 1) * take;
     const user: number | null = dto.user ? dto.user : null;
     const product: number | null = dto.product ? dto.product : null;
-    let include: any[] = [];
-    if (product) {
-      include.push({
-        model: Product,
-        as: 'product',
-        where: {
-          id: product,
-        },
-      });
-    }
-    if (user) {
-      include.push({
+    let userWhere = user ? { id: user } : {};
+    let productWhere = product ? { id: product } : {};
+    let include: any[] = [
+      {
         model: User,
         as: 'user',
-        where: {
-          id: user,
-        },
-      });
-    }
+        attributes: ['id', 'email'],
+        where: userWhere,
+      },
+      {
+        model: Product,
+        as: 'product',
+        where: productWhere,
+      },
+    ];
     console.log('Found all review...');
     const reviews: Review[] = await this.reviewRepository.findAll({
       include,

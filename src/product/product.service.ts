@@ -120,6 +120,11 @@ export class ProductService {
           as: 'images',
           attributes: ['url'],
         },
+        {
+          model: User,
+          as: 'owner',
+          attributes: ['id', 'email']
+        }
       ],
       attributes: {
         include: [
@@ -141,6 +146,7 @@ export class ProductService {
         'Product.name',
         'sub_category.id',
         'images.id',
+        'owner.id',
       ],
     });
     for await (const product of products) {
