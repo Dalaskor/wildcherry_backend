@@ -82,6 +82,7 @@ export class ProductService {
     }
     let categoryWhere: any = {};
     if (dto.category) {
+      console.log('CHECK CATEGORY FILTER');
       categoryWhere = {
         name: dto.category,
       };
@@ -95,7 +96,6 @@ export class ProductService {
     console.log('price: ', priceStartFilter, ' ', priceEndFilter);
     console.log('score: ', scoreStartFilter, ' ', scoreEndFilter);
     const products: Product[] = await this.productRepository.findAll({
-      subQuery: false,
       include: [
         {
           model: Review,
@@ -111,7 +111,6 @@ export class ProductService {
           model: SubCategory,
           as: 'sub_category',
           attributes: ['id', 'name'],
-          where: categoryWhere,
         },
         {
           model: ProductImages,
@@ -285,11 +284,23 @@ export class ProductService {
     product.specification = specification;
     await product.$set('images', imgsId);
     product.images = imgs;
-    await product.$set('sub_category', subCategory.id);
     product.sub_category = subCategory;
-    await product.$set('owner', user.id);
     product.owner = user;
+    if (!subCategory.products) {
+      await subCategory.$set('products', []);
+      subCategory.products = [];
+    }
+    if (!user.products) {
+      await user.$set('products', []);
+      user.products = [];
+    }
+    await subCategory.$add('products', product.id);
+    subCategory.products.push(product);
+    await user.$add('products', product.id);
+    user.products.push(product);
+    await subCategory.save();
     await product.save();
+    await user.save();
     return product;
   }
   /**
