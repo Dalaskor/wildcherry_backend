@@ -52,7 +52,11 @@ export class ProductImagesService {
     const productImgs: ProductImages[] = await this.productImgsRepo.findAll({
       include: {
         model: Product,
-        where: { id: product },
+        as: 'product',
+        attributes: [],
+        where: {
+          id: product,
+        },
       },
     });
     console.log('Found result');

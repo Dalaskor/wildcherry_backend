@@ -32,7 +32,7 @@ export class ProductImagesController {
     if (!Number(id)) {
       throw new BadRequestException('Ошибка ввода');
     }
-    return this.productImgService.getAll();
+    return this.productImgService.getAllByProduct(id);
   }
   @ApiOperation({ summary: 'Получить одно изображение товара по id' })
   @ApiParam({

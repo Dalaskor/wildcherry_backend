@@ -303,25 +303,20 @@ export class ProductService {
     dto: UpdateProductDto,
     req_user: User,
   ): Promise<Product> {
-    const product: Product = await this.getOne(id);
+    const product: Product = await this.productRepository.findOne<Product>({
+      where: { id },
+      include: { all: true },
+    });
     this.abilityService.checkAbility(req_user, product, ACTIONS.UPDATE);
     console.log('Product changing...');
     product.name = dto.name ? dto.name : product.name;
     product.description = dto.description ? dto.description : dto.description;
     product.price = dto.price ? dto.price : dto.price;
-    ////
     const subCategory: SubCategory = await this.subCategoryService.getOne(
       dto.sub_category,
     );
-    await product.sub_category.$remove('product', product.id);
-    if (!subCategory.products) {
-      await subCategory.$set('products', []);
-      subCategory.products = [];
-    }
-    await subCategory.$add('products', product.id);
-    subCategory.products.push(product);
+    await product.$set('sub_category', subCategory.id);
     product.sub_category = subCategory;
-    await subCategory.save();
     const specification: Specification = await this.specificationService.getOne(
       product.id,
     );
